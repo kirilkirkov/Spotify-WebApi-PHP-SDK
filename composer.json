@@ -1,0 +1,27 @@
+{
+    "name": "kirilkirkov/spotify-webapi-sdk",
+    "description": "Spotify WebApi PHP Library",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+      {
+        "name": "Kiril Kirkov",
+        "email": "kirilkirkov91@gmail.com"
+      }
+    ],
+    "require": {
+        "php": ">= 7.2",
+    },
+    "repositories": [
+        {
+          "type": "git",
+          "url": "https://github.com/kirilkirkov/Spotify-WebApi-PHP-SDK"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+          "SpotifyWebAPI\\": "src",
+        }
+      }
+  }
+  
