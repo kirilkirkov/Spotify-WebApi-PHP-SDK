@@ -2,6 +2,11 @@
 
 namespace SpotifyWebAPI\Services;
 
+/**
+ * @author Kiril Kirkov
+ * Spotify Albums Service
+ */
+
 class Albums
 {
     const GET_ALBUMS = '/v1/albums';

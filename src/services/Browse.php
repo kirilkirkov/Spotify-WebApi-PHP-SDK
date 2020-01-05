@@ -2,6 +2,11 @@
 
 namespace SpotifyWebAPI\Services;
 
+/**
+ * @author Kiril Kirkov
+ * Spotify Browse Service
+ */
+
 class Browse
 {
     const GET_CATEGORY = '/v1/browse/categories/{category_id}';

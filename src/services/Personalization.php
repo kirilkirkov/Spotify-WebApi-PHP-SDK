@@ -2,6 +2,11 @@
 
 namespace SpotifyWebAPI\Services;
 
+/**
+ * @author Kiril Kirkov
+ * Spotify Personalization Service
+ */
+
 class Personalization
 {
     const GET_TOP = '/v1/me/top/{type}';

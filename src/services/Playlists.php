@@ -2,6 +2,11 @@
 
 namespace SpotifyWebAPI\Services;
 
+/**
+ * @author Kiril Kirkov
+ * Spotify Playlists Service
+ */
+
 class Playlists
 {
 

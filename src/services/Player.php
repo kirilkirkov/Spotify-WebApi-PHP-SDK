@@ -2,6 +2,11 @@
 
 namespace SpotifyWebAPI\Services;
 
+/**
+ * @author Kiril Kirkov
+ * Spotify Player Service
+ */
+
 class Player
 {
     const PLAYER_DEVICES = '/v1/me/player/devices';

@@ -2,6 +2,11 @@
 
 namespace SpotifyWebAPI\Services;
 
+/**
+ * @author Kiril Kirkov
+ * Spotify Search Service
+ */
+
 class Search
 {
     const SEARCH = '/v1/search';

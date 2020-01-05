@@ -5,8 +5,6 @@ namespace SpotifyWebAPI;
 use SpotifyWebAPI\SpotifyRequests;
 /**
  * @author Kiril Kirkov
- * @link https://github.com/kirilkirkov
- * @version 1.1
  * Spotify Service Api Connection
  */
 
@@ -143,14 +141,22 @@ class SpotifyConnection extends SpotifyRequests
         return $this;
     }
 
-    protected function setRequestContentType($contentType)
-    {
-        $this->requestContentType = $contentType;
-    }
-
     protected function getResponse()
     {
         return $this->response;
+    }
+
+    /**
+     * This function send prepared request and return parsed response
+     */
+    public function getResult()
+    {
+        return $this->sendRequest()->getResponse();
+    }
+
+    protected function setRequestContentType($contentType)
+    {
+        $this->requestContentType = $contentType;
     }
 
     private function parseRawResponse()

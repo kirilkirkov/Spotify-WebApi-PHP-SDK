@@ -2,6 +2,11 @@
 
 namespace SpotifyWebAPI\Services;
 
+/**
+ * @author Kiril Kirkov
+ * Spotify Follow Service
+ */
+
 class Follow
 {
     const CHECK_USER_FOLLOWS = '/v1/me/following/contains';

@@ -2,6 +2,11 @@
 
 namespace SpotifyWebAPI\Services;
 
+/**
+ * @author Kiril Kirkov
+ * Spotify Library Service
+ */
+
 class Library
 {
     const CHECK_SAVED_ALBUMS = '/v1/me/albums/contains';

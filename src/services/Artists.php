@@ -2,6 +2,11 @@
 
 namespace SpotifyWebAPI\Services;
 
+/**
+ * @author Kiril Kirkov
+ * Spotify Artists Service
+ */
+
 class Artists
 {
     const GET_ARTIST = '/v1/artists/{id}';

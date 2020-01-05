@@ -2,6 +2,11 @@
 
 namespace SpotifyWebAPI\Services;
 
+/**
+ * @author Kiril Kirkov
+ * Spotify Tracks Service
+ */
+
 class Tracks
 {
     const GET_AUDIO_ANALYSIS = '/v1/audio-analysis/{id}';

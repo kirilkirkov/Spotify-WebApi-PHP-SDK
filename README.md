@@ -2,7 +2,17 @@
 
 requires php >= 7.0
 
+## Installation
+composer require kirilkirkov/spotify-webapi-sdk
+
 ## Doesnt have token?
+
+### Get access token with client credentials
+$token = $this->spotifyWebApi->getAccessTokenWithCredentials(
+    'f6e1137695fb495994040a437d9d38a0',
+    '18d0bbec9ec4494eb5d4e6e6d97c4e0a'
+);
+echo $token;
 
 ### Get access token with code authorization
 Get redirect url for code:
@@ -21,14 +31,7 @@ $accessToken = $this->spotifyWebApi->getAccessTokenWithCode(
 );
 And you will receive $accessToken.
 
-### Get access token with client credentials
-$token = $this->spotifyWebApi->getAccessTokenWithCredentials(
-    'f6e1137695fb495994040a437d9d38a0',
-    '18d0bbec9ec4494eb5d4e6e6d97c4e0a'
-);
-echo $token;
-
 ### Functions
-After initialization with valid access token - new SpotifyWebApi($myToken);
+After initialization with valid access token (new SpotifyWebApi($myToken))
 
 Get several albums: ->api()->getAlbums(['41MnTivkwTO3UUJ8DrqEJJ','6JWc4iAiJ9FjyK0B59ABb4','6UXCm6bOO4gFlDQZV5yL37'])->getResult()

@@ -3,8 +3,12 @@
 namespace SpotifyWebAPI;
 
 use SpotifyWebAPI\SpotifyConnection;
+
 /**
  * @author Kiril Kirkov
+ * @link https://github.com/kirilkirkov/Spotify-WebApi-PHP-SDK
+ * @version 1.2
+ * 
  * Spotify Web Api
  */
 
@@ -16,12 +20,5 @@ class SpotifyWebApi extends SpotifyConnection
             $this->setAccessToken($accessToken);
         }
     }
-
-    /**
-     * This function send prepared request and return parsed response
-     */
-    public function getResult()
-    {
-        return $this->sendRequest()->getResponse();
-    }
+   
 }
