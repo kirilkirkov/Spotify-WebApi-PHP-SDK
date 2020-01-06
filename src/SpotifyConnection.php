@@ -28,6 +28,9 @@ class SpotifyConnection extends \SpotifyWebAPI\SpotifyRequests
     private $customHeaders;
     private $requestContentType;
 
+    private $lastRequest = [];
+    private $manualRefreshToken = false;
+
     /**
      * Set Generated Access Token
      *
@@ -97,6 +100,11 @@ class SpotifyConnection extends \SpotifyWebAPI\SpotifyRequests
         return $this;
     }
 
+    public function getAction()
+    {
+        return $this->action;
+    }
+
     public function account()
     {
         $this->connectionUrl = rtrim(self::ACCOUNT_URL, '/');
@@ -114,10 +122,20 @@ class SpotifyConnection extends \SpotifyWebAPI\SpotifyRequests
         $this->connectionMethod = strtoupper((string) $method);
     }
 
+    public function getConnectionMethod()
+    {
+        return $this->connectionMethod;
+    }
+
     public function setConnectionParams($params)
     {
         $this->connectionParams = (array)$params;
         return $this;
+    }
+
+    public function getConnectionParams()
+    {
+       return $this->connectionParams;
     }
 
     public function sendRequest()
@@ -161,10 +179,15 @@ class SpotifyConnection extends \SpotifyWebAPI\SpotifyRequests
         
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_HEADER, 1);
-
         $fullResponse = curl_exec($ch);
-        $this->getResponseBody($fullResponse);
-        $this->parseRawResponse();
+        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $this->getResponseBody($fullResponse, $header_size);
+
+        try {
+            $this->parseRawResponse();
+        } catch(SpotifyWebAPIException $e) {
+            $this->errorHandler($e);
+        }
 
         if(curl_error($ch)) {
             throw new SpotifyWebAPIException('cURL transport error: ' . curl_errno($ch) . ' ' .  curl_error($ch));
@@ -172,6 +195,85 @@ class SpotifyConnection extends \SpotifyWebAPI\SpotifyRequests
 
         curl_close($ch);
         return $this;
+    }
+    
+    private function errorHandler(SpotifyWebAPIException $e)
+    {
+        if($e->hasExpiredToken()) {
+            if($this->manualRefreshToken === false) {
+                $this->refreshTokenAndReCallLastRequest();
+            } else {
+                $this->refreshTokenAndReturnBack();
+            }
+        } else {
+            throw new SpotifyWebAPIException($e->getMessage());
+        }
+    }
+
+    private function refreshTokenAndReturnBack()
+    {
+        $result = $this->refreshAccessToken();
+        if(!isset($result->access_token)) {
+            throw new SpotifyWebAPIException('Cant find access token in refresh token response');
+        }
+    }
+
+    private function refreshTokenAndReCallLastRequest()
+    {
+        $this->setLastRequest();
+        $result = $this->refreshAccessToken();
+        if(isset($result->access_token)) {
+            $this->setAccessToken($result->access_token);
+            $this->putLastRequest();
+            $this->setCustomHeaders(null);
+            $this->getResult();
+        } else {
+            throw new SpotifyWebAPIException('Cant find access token in refresh token response');
+        }
+    }
+
+    public function manualRefreshToken($status = true)
+    {
+        $this->manualRefreshToken = $status;
+    }
+
+    private function setLastRequest()
+    {
+        $this->lastRequest = [
+            'params' => $this->getConnectionParams(),
+            'method' => $this->getConnectionMethod(),
+            'action' => $this->getAction(),
+            'url' => $this->getConnectionUrl(),
+        ];
+    }
+
+    private function putLastRequest()
+    {
+        if(isset($this->lastRequest['params'])) {
+            $this->setConnectionParams($this->lastRequest['params']);
+        }
+        if(isset($this->lastRequest['method'])) {
+            $this->setConnectionMethod($this->lastRequest['method']);
+        }
+        if(isset($this->lastRequest['action'])) {
+            $this->setAction($this->lastRequest['action']);
+        }
+        if(isset($this->lastRequest['action'])) {
+            $this->setAction($this->lastRequest['action']);
+        }
+        if(isset($this->lastRequest['url'])) {
+            $this->setConnectionUrl($this->lastRequest['url']);
+        }
+    }
+    
+    private function getConnectionUrl()
+    {
+        return $this->connectionUrl;
+    }
+
+    private function setConnectionUrl()
+    {
+        return $this->connectionUrl;
     }
 
     protected function getResponse()
@@ -192,33 +294,25 @@ class SpotifyConnection extends \SpotifyWebAPI\SpotifyRequests
         $this->requestContentType = $contentType;
     }
 
-    private function getResponseBody($fullResponse)
+    private function getResponseBody($fullResponse, $header_size)
     {
-        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $header = substr($fullResponse, 0, $header_size);
         $this->rawResponseBody = substr($fullResponse, $header_size);
     }
-    
+
     private function parseRawResponse()
     {
         $decodedResponse = json_decode($this->rawResponseBody);
         if(json_last_error() !== JSON_ERROR_NONE) {
             throw new SpotifyWebAPIException('The response from Spotify is not valid json');
         }
-        $this->response = $decodedResponse;
-
-        try {
-            $this->checkResponseForErrors();
-        } catch(SpotifyWebAPIException $error) {
-
-        }
-    }
-
-    private function checkResponseForErrors()
-    {
-        if(isset($response->error)) {
+        if(isset($decodedResponse->error)) {
+            if(is_string($decodedResponse->error)) {
+                throw new SpotifyWebAPIException($decodedResponse->error);
+            }
             throw new SpotifyWebAPIException($decodedResponse->error->message, $decodedResponse->error->status);
         }
+        $this->response = $decodedResponse;
     }
 
     public function getAuthorizationBasicHeader()
@@ -243,13 +337,23 @@ class SpotifyConnection extends \SpotifyWebAPI\SpotifyRequests
         $this->customHeaders = $customHeaders;
     }
 
-    private function refreshAccessToken()
+    /**
+     * Auto refresh expired token
+     * 
+     * @return string Access Token
+     */
+    public function refreshAccessToken()
     {
         $parameters = [
             'grant_type' => 'refresh_token',
             'refresh_token' => $this->getRefreshToken(),
         ];
-        $this->customHeaders = $this->getAuthorizationBasicHeader();
-        $response = $this->account()->token()->setConnectionParams($parameters)->sendRequest()->getResponse();
+        $this->setAccessToken(null);
+        $this->setCustomHeaders($this->getAuthorizationBasicHeader());
+        try {
+            return $this->account()->token()->setConnectionParams($parameters)->sendRequest()->getResponse();
+        } catch(SpotifyWebAPIException $e) {
+            throw new SpotifyWebAPIException('Cant Refresh Access Token - '.$e->getMessage());
+        }
     }
 }

@@ -29,11 +29,6 @@ class SpotifyWebApi
         }
     }
 
-    public function connection()
-    {
-        return $this->connection;
-    }
-
     private function setCredentials($credentials)
     {
         if(isset($credentials['accessToken'])) {
@@ -47,6 +42,15 @@ class SpotifyWebApi
         }
         if(isset($credentials['clientSecret'])) {
             $this->connection->setClientSecret($credentials['clientSecret']);
+        }
+    }
+
+    public function connection()
+    {
+        try {
+            return $this->connection;
+        } catch(SpotifyWebAPIException $e) {
+            throw $e->getMessage();
         }
     }
 
@@ -93,7 +97,7 @@ class SpotifyWebApi
         $this->connection->setCustomHeaders($authBasic);
         $response = $this->connection->account()->token()->setConnectionParams($parameters)->getResult();
         if(!isset($response->access_token)) {
-            throw new \Exception('Access token missing in response');
+            throw new SpotifyWebAPIException('Access token missing in response');
         }
         return ['accessToken' => $response->access_token, 'refreshToken' => $response->refresh_token];
     }
@@ -115,8 +119,17 @@ class SpotifyWebApi
         $this->connection->setCustomHeaders($authBasic);
         $response = $this->connection->account()->token()->setConnectionParams($parameters)->getResult();
         if(!isset($response->access_token)) {
-            throw new \Exception('Access token missing in response');
+            throw new SpotifyWebAPIException('Access token missing in response');
         }
         return $response->access_token;
+    }
+
+    /**
+     * Must add in constructor valid refresh token
+     * @return string New Access token
+     */
+    public function refreshAccessToken()
+    {
+        return $this->connection()->refreshAccessToken();
     }
 }

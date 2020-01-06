@@ -33,6 +33,15 @@ $tokens = $spotifyWebApi->getAccessTokenWithCode(
 );
 And you will receive array with $accessToken and $refreshToken.
 
+### Access/Refresh Tokens
+Spotify tokens are valid 1 hour. If your token is expired and you make a call, the sdk auto renew access token with 
+provided refresh token in every query (as there is no safe place to automatically save it).
+If you set $spotifyWebApi->connection()->manualRefreshToken(); before your request calls, if access token is expired 
+will be returned from the query, object with the new access_token,
+then you can save it in database and recall request with a fresh Access token.
+You can also generate access token with refresh token manually with $result = $spotifyWebApi->refreshAccessToken();
+and save final expire timestamp with  time() + $result->expires_in,
+
 ### Functions
 After initialization with valid access token (new SpotifyWebApi($myToken))
 

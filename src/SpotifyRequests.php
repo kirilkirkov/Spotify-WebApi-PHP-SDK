@@ -114,6 +114,8 @@ class SpotifyRequests
             }
 
             return $this;
+        } else {
+            throw new SpotifyWebAPIException("Cant resolve request {$name}");
         }
     }
 }
