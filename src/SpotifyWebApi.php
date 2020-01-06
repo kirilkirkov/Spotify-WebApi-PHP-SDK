@@ -2,8 +2,6 @@
 
 namespace SpotifyWebAPI;
 
-use SpotifyWebAPI\SpotifyConnection;
-
 /**
  * @author Kiril Kirkov
  * @link https://github.com/kirilkirkov/Spotify-WebApi-PHP-SDK
@@ -12,13 +10,32 @@ use SpotifyWebAPI\SpotifyConnection;
  * Spotify Web Api
  */
 
-class SpotifyWebApi extends SpotifyConnection
+class SpotifyWebApi
 {
-    public function __construct($accessToken = null)
+    private $connection;
+
+    /**
+     * @param array $credentials User credentials
+     * - Client Id.
+     * - Client Secret.
+     * - Refresh Token.
+     * - (Optional) Access Token.
+     */
+    public function __construct($credentials = [])
     {
-        if(!is_null($accessToken)) {
-            $this->setAccessToken($accessToken);
+        $this->connection = new SpotifyWebAPI\SpotifyConnection();
+        if(!empty($credentials)) {
+            $this->setCredentials($credentials);
         }
     }
-   
+
+    private function setCredentials($credentials)
+    {
+        if(isset($credentials['accessToken'])) {
+            $this->connection->setAccessToken($credentials['accessToken']);
+        }
+        if(isset($credentials['refreshToken'])) {
+            $this->connection->setRefreshToken($credentials['refreshToken']);
+        }
+    }
 }

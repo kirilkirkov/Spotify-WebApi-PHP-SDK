@@ -14,8 +14,9 @@ class SpotifyConnection extends SpotifyRequests
     const API_URL = 'https://api.spotify.com';
 
     private $accessToken;
-    private $clientId;
-    private $clientSecret;
+    private $refreshToken = 'AQDRwRgnH4As5UUNCx03f19vPE_8OfPUuWnUBGsZO7H23gwrrpiy5HDVYC6qI4f2S0Yvk2GMIn2nx0wPOulr5PnGJuenFxNMqEs5NL80mQe00OWFUBN82c6Z7CofKRvliBk';
+    private $clientId = 'f6e1137695fb495994040a437d9d38a0';
+    private $clientSecret = '18d0bbec9ec4494eb5d4e6e6d97c4e0a';
     private $redirectUrl;
 
     private $connectionUrl;
@@ -45,13 +46,43 @@ class SpotifyConnection extends SpotifyRequests
     ];
 
     /**
-     * Spotify Set Generated Access Token
+     * Set Generated Access Token
      *
      * @param string $acccessToken Valid access token.
      */
     public function setAccessToken($accessToken)
     {
         $this->accessToken = $accessToken;
+    }
+
+    /**
+     * Set Generated Refresh Token
+     *
+     * @param string $refreshToken Valid refresh token.
+     */
+    public function setRefreshToken($refreshToken)
+    {
+        $this->refreshToken = $refreshToken;
+    }
+
+    /**
+     * Set Client Id
+     *
+     * @param string $clientId Valid client id.
+     */
+    public function setCliendId($clientId)
+    {
+        $this->clientId = $clientId;
+    }
+
+    /**
+     * Set Client Secret.
+     *
+     * @param string $clientSecret Valid client secret.
+     */
+    public function setClientSecret($clientSecret)
+    {
+        $this->clientSecret = $clientSecret;
     }
 
     /**
@@ -200,12 +231,13 @@ class SpotifyConnection extends SpotifyRequests
     /**
      * Generate token with code - Step 2/2
      * Get the access token with the returned code
+     * Access token expires in 24 hours
      * 
      * @param string $clientId Client id.
      * @param string $clientSecret Client secret.
      * @param string $code Code for token.
      * @param string $redirectUri Callback url with returned access token.
-     * @return string Access Token
+     * @return string Access Token and Refresh Token
      */
     public function getAccessTokenWithCode($clientId, $clientSecret, $code, $redirectUri)
     {
@@ -215,8 +247,9 @@ class SpotifyConnection extends SpotifyRequests
             'redirect_uri' => $redirectUri,
         ];
 
-        $this->customHeaders = 'Authorization: Basic ' . base64_encode("{$clientId}:{$clientSecret}");
+        $this->customHeaders = $this->getAuthorizationBasicHeader();
         $response = $this->account()->token()->setConnectionParams($parameters)->sendRequest()->getResponse();
+        dd($response);
         if(!isset($response->access_token)) {
             throw new \Exception('Access token missing in response');
         }
@@ -225,6 +258,7 @@ class SpotifyConnection extends SpotifyRequests
 
     /**
      * Get access token with client credentials
+     * Access token expires in 24 hours
      * 
      * @param string $clientId Client id.
      * @param string $clientSecret Client secret.
@@ -235,12 +269,29 @@ class SpotifyConnection extends SpotifyRequests
         $parameters = [
             'grant_type' => 'client_credentials',
         ];
-        $this->customHeaders = 'Authorization: Basic ' . base64_encode("{$clientId}:{$clientSecret}");
+        $this->customHeaders = $this->getAuthorizationBasicHeader();
         $response = $this->account()->token()->setConnectionParams($parameters)->sendRequest()->getResponse();
         if(!isset($response->access_token)) {
             throw new \Exception('Access token missing in response');
         }
         return $response->access_token;
+    }
+
+    public function refreshAccessToken()
+    {
+        $parameters = [
+            'grant_type' => 'refresh_token',
+            'refresh_token' => $this->refreshToken,
+        ];
+        $this->customHeaders = $this->getAuthorizationBasicHeader();
+        $response = $this->account()->token()->setConnectionParams($parameters)->sendRequest()->getResponse();
+        dd($response);
+    }
+
+    private function getAuthorizationBasicHeader()
+    {
+        $payload = base64_encode($this->clientId . ':' . $this->clientSecret);
+        return 'Authorization: Basic ' . $payload;
     }
 
     private function getPreparedUrl()

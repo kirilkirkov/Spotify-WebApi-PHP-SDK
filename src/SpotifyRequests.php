@@ -69,7 +69,7 @@ class SpotifyRequests
         
     public function authorize()
     {
-        $this->setConnectionMethod('DELETE');
+        $this->setConnectionMethod('GET');
         $this->action = self::AUTHORIZE;
         return $this;
     }

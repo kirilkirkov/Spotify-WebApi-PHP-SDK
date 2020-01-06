@@ -29,7 +29,7 @@ $accessToken = $this->spotifyWebApi->getAccessTokenWithCode(
     'AQCopNupLMEYhgGbt4pp1dsy5NoCSqoJ5Q3LZ9IBqUHAmBd7FVJ9e-u-ggSmtTRWiP94RGW-xxj7eLTqNCa6FE-MvlgykPpvuvmhzIKEPLW8fCKX-ff5WOn4PE7EtGf0E5LoXNLku1P1NjP5kckPFVolWlpIHpNtvPtFoROUDhp5XGvfiavPsnj-GZCNLYJpyTOf0evA',
     'http://apollo.localhost/callback'
 );
-And you will receive $accessToken.
+And you will receive $accessToken and $refreshToken.
 
 ### Functions
 After initialization with valid access token (new SpotifyWebApi($myToken))
