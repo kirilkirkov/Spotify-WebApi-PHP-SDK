@@ -40,6 +40,7 @@ class Artists implements InterfaceSpotifyService
     {
         $this->setConnectionMethod('GET');
         $this->setAction(str_replace('{id}', $id, self::GET_ARTIST_ALBUMS));
+        SpotifyPagination::setHasPagination(true);
         return $this;
     }
 

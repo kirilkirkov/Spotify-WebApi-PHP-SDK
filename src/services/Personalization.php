@@ -24,6 +24,7 @@ class Personalization implements InterfaceSpotifyService
     {
         $this->setConnectionMethod('GET');
         $this->setAction(str_replace('{type}', $type, self::GET_TOP));
+        SpotifyPagination::setHasPagination(true);
         return $this;
     }
 

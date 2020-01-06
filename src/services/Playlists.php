@@ -72,6 +72,7 @@ class Playlists implements InterfaceSpotifyService
     {
         $this->setConnectionMethod('GET');
         $this->setAction(self::GET_PLAYLISTS);
+        SpotifyPagination::setHasPagination(true);
         return $this;
     }
 
@@ -84,6 +85,7 @@ class Playlists implements InterfaceSpotifyService
     {
         $this->setConnectionMethod('GET');
         $this->setAction(str_replace('{user_id}', $user_id, self::USERS_PLAYLISTS));
+        SpotifyPagination::setHasPagination(true);
         return $this;
     }
 
@@ -120,6 +122,7 @@ class Playlists implements InterfaceSpotifyService
     {
         $this->setConnectionMethod('GET');
         $this->setAction(str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS));
+        SpotifyPagination::setHasPagination(true);
         return $this;
     }
 

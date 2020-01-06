@@ -41,6 +41,7 @@ class Browse implements InterfaceSpotifyService
     {
         $this->setConnectionMethod('GET');
         $this->setAction(str_replace('{category_id}', $category_id, self::GET_CATEGORY_PLAYLISTS));
+        SpotifyPagination::setHasPagination(true);
         return $this;
     }
 
@@ -52,6 +53,7 @@ class Browse implements InterfaceSpotifyService
     {
         $this->setConnectionMethod('GET');
         $this->setAction(self::GET_CATEGORIES_LIST);
+        SpotifyPagination::setHasPagination(true);
         return $this;
     }
 
@@ -63,6 +65,7 @@ class Browse implements InterfaceSpotifyService
     {
         $this->setConnectionMethod('GET');
         $this->setAction(self::GET_FEATURED_PLAYLISTS);
+        SpotifyPagination::setHasPagination(true);
         return $this;
     }
 
@@ -74,6 +77,7 @@ class Browse implements InterfaceSpotifyService
     {
         $this->setConnectionMethod('GET');
         $this->setAction(self::GET_NEW_RELEASES);
+        SpotifyPagination::setHasPagination(true);
         return $this;
     }
 

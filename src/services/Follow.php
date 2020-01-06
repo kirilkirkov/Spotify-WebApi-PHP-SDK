@@ -88,6 +88,7 @@ class Follow implements InterfaceSpotifyService
         $this->setConnectionParams(['type' => 'artist']);
         $this->setConnectionMethod('GET');
         $this->setAction(self::ME_FOLLOWING);
+        SpotifyPagination::setHasPagination(true);
         return $this;
     }
 

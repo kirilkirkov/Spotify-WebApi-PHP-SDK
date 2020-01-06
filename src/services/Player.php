@@ -57,6 +57,7 @@ class Player implements InterfaceSpotifyService
     {
         $this->setConnectionMethod('GET');
         $this->setAction(self::RECENT_PLAYED);
+        SpotifyPagination::setHasPagination(true);
         return $this;
     }
 

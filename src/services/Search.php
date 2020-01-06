@@ -25,6 +25,7 @@ class Search implements InterfaceSpotifyService
     {
         $this->setConnectionParams(['q' => $q, 'type' => $type]);
         $this->setConnectionMethod('GET');
+        SpotifyPagination::setHasPagination(true);
         $this->setAction(self::SEARCH);
     }
 

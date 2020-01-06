@@ -56,6 +56,7 @@ class Library implements InterfaceSpotifyService
     {
         $this->setConnectionMethod('GET');
         $this->setAction(self::GET_MY_ALBUMS);
+        SpotifyPagination::setHasPagination(true);
         return $this;
     }
 
@@ -67,6 +68,7 @@ class Library implements InterfaceSpotifyService
     {
         $this->setConnectionMethod('GET');
         $this->setAction(self::GET_MY_TRACKS);
+        SpotifyPagination::setHasPagination(true);
         return $this;
     }
 
