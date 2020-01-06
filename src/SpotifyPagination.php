@@ -5,9 +5,20 @@ namespace SpotifyWebAPI;
 class SpotifyPagination
 {
 
+    private static $hasPagination = false;
     private static $total;
-    private static $limit;
-    private static $offset;
+    private static $limit = 20;
+    private static $offset = 0;
+
+    public static function setHasPagination($status)
+    {
+        self::$hasPagination = (boolean)$status;
+    }
+
+    public static function getHasPagination()
+    {
+        return self::$hasPagination;
+    }
 
     public static function setTotal($total)
     {
@@ -21,7 +32,9 @@ class SpotifyPagination
 
     public static function setLimit($limit)
     {
-        self::$limit = (int)$limit;
+        if((int)$limit > 0) {
+            self::$limit = (int)$limit;
+        }
     }
 
     public static function getLimit()
@@ -39,4 +52,17 @@ class SpotifyPagination
         return self::$offset;
     }
 
+    public static function parsePagination($response)
+    {
+        if(isset($response->limit)) {
+            self::setLimit($response->limit);
+        }
+        if(isset($response->offset)) {
+            self::setOffset($response->offset);
+        }
+        if(isset($response->total)) {
+            self::setTotal($response->total);
+        }
+        unset($response);
+    }
 }

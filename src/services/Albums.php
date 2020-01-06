@@ -2,6 +2,8 @@
 
 namespace SpotifyWebAPI\Services;
 
+use \SpotifyWebAPI\SpotifyPagination;
+
 /**
  * @author Kiril Kirkov
  * Spotify Albums Service
@@ -41,6 +43,7 @@ class Albums implements InterfaceSpotifyService
     {
         $this->setConnectionMethod('GET');
         $this->setAction(str_replace('{id}', $id, self::GET_ALBUM_TRACKS));
+        SpotifyPagination::setHasPagination(true);
         return $this;
     }
 

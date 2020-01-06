@@ -312,6 +312,8 @@ class SpotifyConnection extends \SpotifyWebAPI\SpotifyRequests
             }
             throw new SpotifyWebAPIException($decodedResponse->error->message, $decodedResponse->error->status);
         }
+
+        SpotifyPagination::parsePagination($decodedResponse);
         $this->response = $decodedResponse;
     }
 
@@ -323,13 +325,18 @@ class SpotifyConnection extends \SpotifyWebAPI\SpotifyRequests
 
     public function getPreparedUrl()
     {
+        $paginationParams = null;
+        if(SpotifyPagination::getHasPagination()) {
+            $paginationParams = 'limit=' . SpotifyPagination::getLimit() . '&offset=' . SpotifyPagination::getOffset();
+        }
+
         if(strtoupper($this->connectionMethod) == 'GET') {
             if(!empty($this->connectionParams)) {
-                return $this->connectionUrl . $this->action . '?' . http_build_query($this->connectionParams);
+                return $this->connectionUrl . $this->action . '?' . http_build_query($this->connectionParams) . '&' . $paginationParams;
             }
-            return $this->connectionUrl . $this->action;
+            return $this->connectionUrl . $this->action . '?' . $paginationParams;
         }
-        return $this->connectionUrl . $this->action;
+        return $this->connectionUrl . $this->action . '?' . $paginationParams;
     }
 
     public function setCustomHeaders($customHeaders)

@@ -124,6 +124,21 @@ class SpotifyWebApi
         return $response->access_token;
     }
 
+    public function setPaginationLimit($limit)
+    {
+        SpotifyPagination::setLimit((int)$limit);
+    }
+
+    public function setPaginationOffset($offset)
+    {
+        SpotifyPagination::setOffset((int)$offset);
+    }
+
+    public function getpaginationTotal()
+    {
+        return SpotifyPagination::getTotal();
+    }
+
     /**
      * Must add in constructor valid refresh token
      * @return string New Access token
