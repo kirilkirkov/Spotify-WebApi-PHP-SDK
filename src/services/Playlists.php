@@ -7,7 +7,7 @@ namespace SpotifyWebAPI\Services;
  * Spotify Playlists Service
  */
 
-class Playlists
+class Playlists implements InterfaceSpotifyService
 {
 
     const PLAYLIST_TRACKS = '/v1/playlists/{playlist_id}/tracks';
@@ -15,6 +15,10 @@ class Playlists
     const USERS_PLAYLISTS = '/v1/users/{user_id}/playlists';
     const GET_PLAYLISTS = '/v1/me/playlists';
     const PLAYLIST_IMAGES = '/v1/playlists/{playlist_id}/images';
+
+    private $method;
+    private $params;
+    private $action;
 
     /**
      * Add Tracks to a Playlist
@@ -28,7 +32,7 @@ class Playlists
         $uris_string = implode(',', $uris);
         $this->setConnectionParams(['uris' => $uris_string]);
         $this->setConnectionMethod('POST');
-        $this->action = str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS);
+        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS));
         return $this;
     }
 
@@ -42,7 +46,7 @@ class Playlists
     {
         $this->setConnectionParams($values);
         $this->setConnectionMethod('PUT');
-        $this->action = str_replace('{playlist_id}', $playlist_id, self::GET_PLAYLIST);
+        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::GET_PLAYLIST));
         return $this;
     }
 
@@ -56,7 +60,7 @@ class Playlists
     {
         $this->setConnectionParams($values);
         $this->setConnectionMethod('POST');
-        $this->action = str_replace('{user_id}', $user_id, self::USERS_PLAYLISTS);
+        $this->setAction(str_replace('{user_id}', $user_id, self::USERS_PLAYLISTS));
         return $this;
     }
 
@@ -67,7 +71,7 @@ class Playlists
     public function getPlaylists()
     {
         $this->setConnectionMethod('GET');
-        $this->action = self::GET_PLAYLISTS;
+        $this->setAction(self::GET_PLAYLISTS);
         return $this;
     }
 
@@ -79,7 +83,7 @@ class Playlists
     public function getUsersPlaylists($user_id)
     {
         $this->setConnectionMethod('GET');
-        $this->action = str_replace('{user_id}', $user_id, self::USERS_PLAYLISTS);
+        $this->setAction(str_replace('{user_id}', $user_id, self::USERS_PLAYLISTS));
         return $this;
     }
 
@@ -91,7 +95,7 @@ class Playlists
     public function getPlaylistCover($playlist_id)
     {
         $this->setConnectionMethod('GET');
-        $this->action = str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_IMAGES);
+        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_IMAGES));
         return $this;
     }
 
@@ -103,7 +107,7 @@ class Playlists
     public function getPlaylist($playlist_id)
     {
         $this->setConnectionMethod('GET');
-        $this->action = str_replace('{playlist_id}', $playlist_id, self::GET_PLAYLIST);
+        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::GET_PLAYLIST));
         return $this;
     }
 
@@ -115,7 +119,7 @@ class Playlists
     public function getPlaylistTracks($playlist_id)
     {
         $this->setConnectionMethod('GET');
-        $this->action = str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS);
+        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS));
         return $this;
     }
 
@@ -131,7 +135,7 @@ class Playlists
         $tracks_string = implode(',', $tracks);
         $this->setConnectionParams(['tracks' => $tracks_string]);
         $this->setConnectionMethod('DELETE');
-        $this->action = str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS);
+        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS));
         return $this;
     }
 
@@ -145,7 +149,7 @@ class Playlists
     {
         $this->setConnectionParams($params);
         $this->setConnectionMethod('PUT');
-        $this->action = str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS);
+        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS));
         return $this;
     }
 
@@ -161,7 +165,7 @@ class Playlists
         $uris_string = implode(',', $uris);
         $this->setConnectionParams(['uris' => $uris_string]);
         $this->setConnectionMethod('PUT');
-        $this->action = str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS); 
+        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS)); 
     }
 
     /**
@@ -175,6 +179,36 @@ class Playlists
         $this->setConnectionParams($image);
         $this->setRequestContentType('image/jpeg');
         $this->setConnectionMethod('PUT');
-        $this->action = str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_IMAGES); 
+        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_IMAGES)); 
+    }
+
+    private function setConnectionMethod($method)
+    {
+        $this->method = $method;
+    }
+
+    public function getConnectionMethod()
+    {
+        return $this->method;
+    }
+
+    private function setConnectionParams($params)
+    {
+        $this->params = $params;
+    }
+
+    public function getConnectionParams()
+    {
+        return $this->params;
+    }
+
+    private function setAction($action)
+    {
+        $this->action = $action;
+    }
+
+    public function getAction()
+    {
+        return $this->action;
     }
 }

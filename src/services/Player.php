@@ -7,7 +7,7 @@ namespace SpotifyWebAPI\Services;
  * Spotify Player Service
  */
 
-class Player
+class Player implements InterfaceSpotifyService
 {
     const PLAYER_DEVICES = '/v1/me/player/devices';
     const ME_PLAYER = '/v1/me/player';
@@ -23,6 +23,10 @@ class Player
     const PLAYER_SHUFFLE = '/v1/me/player/shuffle';
     const PLAYER_TRANSFER = '/v1/me/player';
 
+    private $method;
+    private $params;
+    private $action;
+
     /**
      * Get a User's Available Devices
      * Authorization - Required
@@ -30,7 +34,7 @@ class Player
     public function getPlayerDevices()
     {
         $this->setConnectionMethod('GET');
-        $this->action = self::PLAYER_DEVICES;
+        $this->setAction(self::PLAYER_DEVICES);
         return $this;
     }
 
@@ -41,7 +45,7 @@ class Player
     public function getPlayer()
     {
         $this->setConnectionMethod('GET');
-        $this->action = self::ME_PLAYER;
+        $this->setAction(self::ME_PLAYER);
         return $this;
     }
 
@@ -52,7 +56,7 @@ class Player
     public function getRecentPlayedTracks()
     {
         $this->setConnectionMethod('GET');
-        $this->action = self::RECENT_PLAYED;
+        $this->setAction(self::RECENT_PLAYED);
         return $this;
     }
 
@@ -63,7 +67,7 @@ class Player
     public function getPlayingTrack()
     {
         $this->setConnectionMethod('GET');
-        $this->action = self::PLAYING_TRACK;
+        $this->setAction(self::PLAYING_TRACK);
         return $this;
     }
 
@@ -74,7 +78,7 @@ class Player
     public function playerPause()
     {
         $this->setConnectionMethod('PUT');
-        $this->action = self::PLAYER_PAUSE;
+        $this->setAction(self::PLAYER_PAUSE);
         return $this;
     }
 
@@ -88,7 +92,7 @@ class Player
     {
         $this->setConnectionParams(['position_ms' => $position_ms]);
         $this->setConnectionMethod('PUT');
-        $this->action = self::PLAYER_SEEK;
+        $this->setAction(self::PLAYER_SEEK);
         return $this;
     }
     
@@ -104,7 +108,7 @@ class Player
     {
         $this->setConnectionParams(['state' => $state]);
         $this->setConnectionMethod('PUT');
-        $this->action = self::REPEAT_MODE;
+        $this->setAction(self::REPEAT_MODE);
         return $this;
     }
 
@@ -118,7 +122,7 @@ class Player
     {
         $this->setConnectionParams(['volume_percent' => $volume_percent]);
         $this->setConnectionMethod('PUT');
-        $this->action = self::PLAYER_VOLUME;
+        $this->setAction(self::PLAYER_VOLUME);
         return $this;
     }
 
@@ -130,7 +134,7 @@ class Player
     public function playerGoNext()
     {
         $this->setConnectionMethod('POST');
-        $this->action = self::PLAYER_NEXT;
+        $this->setAction(self::PLAYER_NEXT);
         return $this;
     }
 
@@ -142,7 +146,7 @@ class Player
     public function playerGoPrevious()
     {
         $this->setConnectionMethod('POST');
-        $this->action = self::PLAYER_PREVIOUS;
+        $this->setAction(self::PLAYER_PREVIOUS);
         return $this;
     }
 
@@ -154,7 +158,7 @@ class Player
     public function playerPlay()
     {
         $this->setConnectionMethod('PUT');
-        $this->action = self::PLAYER_PLAY;
+        $this->setAction(self::PLAYER_PLAY);
         return $this;
     }
 
@@ -167,7 +171,7 @@ class Player
     {
         $this->setConnectionParams(['state' => $state]);
         $this->setConnectionMethod('PUT');
-        $this->action = self::PLAYER_SHUFFLE;
+        $this->setAction(self::PLAYER_SHUFFLE);
         return $this;
     }
 
@@ -181,7 +185,37 @@ class Player
         $device_ids = json_encode(['device_ids' => [$device_id]]);
         $this->setConnectionParams(['device_ids' => $device_ids]);
         $this->setConnectionMethod('PUT');
-        $this->action = self::PLAYER_TRANSFER;
+        $this->setAction(self::PLAYER_TRANSFER);
         return $this;
+    }
+
+    private function setConnectionMethod($method)
+    {
+        $this->method = $method;
+    }
+
+    public function getConnectionMethod()
+    {
+        return $this->method;
+    }
+
+    private function setConnectionParams($params)
+    {
+        $this->params = $params;
+    }
+
+    public function getConnectionParams()
+    {
+        return $this->params;
+    }
+
+    private function setAction($action)
+    {
+        $this->action = $action;
+    }
+
+    public function getAction()
+    {
+        return $this->action;
     }
 }

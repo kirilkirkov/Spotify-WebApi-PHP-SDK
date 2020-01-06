@@ -7,13 +7,17 @@ namespace SpotifyWebAPI\Services;
  * Spotify Follow Service
  */
 
-class Follow
+class Follow implements InterfaceSpotifyService
 {
     const CHECK_USER_FOLLOWS = '/v1/me/following/contains';
     const CHECK_USER_FOLLOW_PLAYLIST = '/v1/playlists/{playlist_id}/followers/contains';
     const FOLLOW_PLAYLIST = '/v1/playlists/{playlist_id}/followers';
     const ME_FOLLOWING = '/v1/me/following';
     
+    private $method;
+    private $params;
+    private $action;
+
     /**
      * Check if Current User Follows Artists or Users
      * Authorization - Required
@@ -26,7 +30,7 @@ class Follow
         $ids_string = implode(',', $ids);
         $this->setConnectionParams(['type' => $type, 'ids' => $ids_string]);
         $this->setConnectionMethod('GET');
-        $this->action = self::CHECK_USER_FOLLOWS;
+        $this->setAction(self::CHECK_USER_FOLLOWS);
         return $this;
     }
 
@@ -42,7 +46,7 @@ class Follow
         $ids_string = implode(',', $ids);
         $this->setConnectionParams(['ids' => $ids_string]);
         $this->setConnectionMethod('GET');
-        $this->action = self::CHECK_USER_FOLLOW_PLAYLIST;
+        $this->setAction(self::CHECK_USER_FOLLOW_PLAYLIST);
         return $this;
     }
 
@@ -58,7 +62,7 @@ class Follow
         $ids_string = implode(',', $ids);
         $this->setConnectionParams(['type' => $type, 'ids' => $ids_string]);
         $this->setConnectionMethod('PUT');
-        $this->action = self::ME_FOLLOWING;
+        $this->setAction(self::ME_FOLLOWING);
         return $this;
     }
 
@@ -70,7 +74,7 @@ class Follow
     public function followPaylist($playlist_id)
     {
         $this->setConnectionMethod('PUT');
-        $this->action = str_replace('{playlist_id}', $playlist_id, self::FOLLOW_PLAYLIST);
+        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::FOLLOW_PLAYLIST));
         return $this;
     }
 
@@ -83,7 +87,7 @@ class Follow
         // Currently only artist is supported from spotify
         $this->setConnectionParams(['type' => 'artist']);
         $this->setConnectionMethod('GET');
-        $this->action = self::ME_FOLLOWING;
+        $this->setAction(self::ME_FOLLOWING);
         return $this;
     }
 
@@ -99,7 +103,7 @@ class Follow
         $ids_string = implode(',', $ids);
         $this->setConnectionParams(['type' => $type, 'ids' => $ids_string]);
         $this->setConnectionMethod('DELETE');
-        $this->action = self::ME_FOLLOWING;
+        $this->setAction(self::ME_FOLLOWING);
         return $this;
     }
 
@@ -111,7 +115,37 @@ class Follow
     public function unfollowPlaylist($playlist_id)
     {
         $this->setConnectionMethod('DELETE');
-        $this->action = str_replace('{playlist_id}', $playlist_id, self::FOLLOW_PLAYLIST);
+        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::FOLLOW_PLAYLIST));
         return $this;
+    }
+
+    private function setConnectionMethod($method)
+    {
+        $this->method = $method;
+    }
+
+    public function getConnectionMethod()
+    {
+        return $this->method;
+    }
+
+    private function setConnectionParams($params)
+    {
+        $this->params = $params;
+    }
+
+    public function getConnectionParams()
+    {
+        return $this->params;
+    }
+
+    private function setAction($action)
+    {
+        $this->action = $action;
+    }
+
+    public function getAction()
+    {
+        return $this->action;
     }
 }

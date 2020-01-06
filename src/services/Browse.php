@@ -7,7 +7,7 @@ namespace SpotifyWebAPI\Services;
  * Spotify Browse Service
  */
 
-class Browse
+class Browse implements InterfaceSpotifyService
 {
     const GET_CATEGORY = '/v1/browse/categories/{category_id}';
     const GET_CATEGORY_PLAYLISTS = '/v1/browse/categories/{category_id}/playlists';
@@ -15,6 +15,10 @@ class Browse
     const GET_FEATURED_PLAYLISTS = '/v1/browse/featured-playlists';
     const GET_NEW_RELEASES = '/v1/browse/new-releases';
     const GET_RECOMMENDATIONS_SEEDS = '/v1/recommendations';
+
+    private $method;
+    private $params;
+    private $action;
 
     /**
      * Get a Category
@@ -24,7 +28,7 @@ class Browse
     public function getCategory($category_id)
     {
         $this->setConnectionMethod('GET');
-        $this->action = str_replace('{category_id}', $category_id, self::GET_CATEGORY);
+        $this->setAction(str_replace('{category_id}', $category_id, self::GET_CATEGORY));
         return $this;
     }
 
@@ -36,7 +40,7 @@ class Browse
     public function getCategoryPlaylists($category_id)
     {
         $this->setConnectionMethod('GET');
-        $this->action = str_replace('{category_id}', $category_id, self::GET_CATEGORY_PLAYLISTS);
+        $this->setAction(str_replace('{category_id}', $category_id, self::GET_CATEGORY_PLAYLISTS));
         return $this;
     }
 
@@ -47,7 +51,7 @@ class Browse
     public function getCategoriesList()
     {
         $this->setConnectionMethod('GET');
-        $this->action = self::GET_CATEGORIES_LIST;
+        $this->setAction(self::GET_CATEGORIES_LIST);
         return $this;
     }
 
@@ -58,7 +62,7 @@ class Browse
     public function getFeaturedPlaylists()
     {
         $this->setConnectionMethod('GET');
-        $this->action = self::GET_FEATURED_PLAYLISTS;
+        $this->setAction(self::GET_FEATURED_PLAYLISTS);
         return $this;
     }
 
@@ -69,7 +73,7 @@ class Browse
     public function getNewReleases()
     {
         $this->setConnectionMethod('GET');
-        $this->action = self::GET_NEW_RELEASES;
+        $this->setAction(self::GET_NEW_RELEASES);
         return $this;
     }
 
@@ -80,7 +84,37 @@ class Browse
     public function getRecommendationsSeeds()
     {
         $this->setConnectionMethod('GET');
-        $this->action = self::GET_RECOMMENDATIONS_SEEDS;
+        $this->setAction(self::GET_RECOMMENDATIONS_SEEDS);
         return $this;
+    }
+
+    private function setConnectionMethod($method)
+    {
+        $this->method = $method;
+    }
+
+    public function getConnectionMethod()
+    {
+        return $this->method;
+    }
+
+    private function setConnectionParams($params)
+    {
+        $this->params = $params;
+    }
+
+    public function getConnectionParams()
+    {
+        return $this->params;
+    }
+
+    private function setAction($action)
+    {
+        $this->action = $action;
+    }
+
+    public function getAction()
+    {
+        return $this->action;
     }
 }

@@ -7,11 +7,15 @@ namespace SpotifyWebAPI\Services;
  * Spotify UsersProfile Service
  */
 
-class UsersProfile
+class UsersProfile implements InterfaceSpotifyService
 {
     
     const GET_USER = '/v1/me';
     const GET_USERS = '/v1/users/{user_id}';
+
+    private $method;
+    private $params;
+    private $action;
 
     /**
      * Get Current User's Profile
@@ -31,6 +35,36 @@ class UsersProfile
     public function getUsers($user_id)
     {
         $this->setConnectionMethod('GET');
-        $this->action = str_replace('{user_id}', $user_id, self::GET_USERS); 
+        $this->setAction(str_replace('{user_id}', $user_id, self::GET_USERS)); 
+    }
+
+    private function setConnectionMethod($method)
+    {
+        $this->method = $method;
+    }
+
+    public function getConnectionMethod()
+    {
+        return $this->method;
+    }
+
+    private function setConnectionParams($params)
+    {
+        $this->params = $params;
+    }
+
+    public function getConnectionParams()
+    {
+        return $this->params;
+    }
+
+    private function setAction($action)
+    {
+        $this->action = $action;
+    }
+
+    public function getAction()
+    {
+        return $this->action;
     }
 }

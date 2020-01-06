@@ -12,72 +12,108 @@ class SpotifyRequests
     const AUTHORIZE = '/authorize';
     const TOKEN = '/api/token';
 
+    private $serviceContainer;
+
     public function albums()
     {
-        return new \SpotifyWebAPI\Services\Albums();
+        $this->serviceContainer = new \SpotifyWebAPI\Services\Albums();
+        return $this;
     }
 
     public function artists()
     {
-        return new \SpotifyWebAPI\Services\Artists();
+        $this->serviceContainer = new \SpotifyWebAPI\Services\Artists();
+        return $this;
     }
 
     public function browse()
     {
-        return new \SpotifyWebAPI\Services\Browse();
+        $this->serviceContainer = new \SpotifyWebAPI\Services\Browse();
+        return $this;
     }
 
     public function follow()
     {
-        return new \SpotifyWebAPI\Services\Follow();
+        $this->serviceContainer = new \SpotifyWebAPI\Services\Follow();
+        return $this;
     }
 
     public function library()
     {
-        return new \SpotifyWebAPI\Services\Library();
+        $this->serviceContainer = new \SpotifyWebAPI\Services\Library();
+        return $this;
     }
 
     public function personalization()
     {
-        return new \SpotifyWebAPI\Services\Personalization();
+        $this->serviceContainer = new \SpotifyWebAPI\Services\Personalization();
+        return $this;
     }
 
     public function player()
     {
-        return new \SpotifyWebAPI\Services\Player();
+        $this->serviceContainer = new \SpotifyWebAPI\Services\Player();
+        return $this;
     }
 
     public function playlists()
     {
-        return new \SpotifyWebAPI\Services\Playlists();
+        $this->serviceContainer = new \SpotifyWebAPI\Services\Playlists();
+        return $this;
     }
 
     public function search()
     {
-        return new \SpotifyWebAPI\Services\Search();
+        $this->serviceContainer = new \SpotifyWebAPI\Services\Search();
+        return $this;
     }
 
     public function tracks()
     {
-        return new \SpotifyWebAPI\Services\Tracks();
+        $this->serviceContainer = new \SpotifyWebAPI\Services\Tracks();
+        return $this;
     }
 
     public function users()
     {
-        return new \SpotifyWebAPI\Services\UsersProfile();
+        $this->serviceContainer = new \SpotifyWebAPI\Services\UsersProfile();
+        return $this;
     }
         
     public function authorize()
     {
         $this->setConnectionMethod('GET');
-        $this->action = self::AUTHORIZE;
+        $this->setAction(self::AUTHORIZE);
         return $this;
     }
 
     public function token()
     {
         $this->setConnectionMethod('POST');
-        $this->action = self::TOKEN;
+        $this->setAction(self::TOKEN);
         return $this;
+    }
+
+    /**
+     * Typically calls methods from loaded Service
+     */
+    public function __call($name, $arguments)
+    {
+        if(method_exists($this->serviceContainer, $name)) {
+
+            call_user_func_array(array($this->serviceContainer, $name), $arguments);
+            
+            if($this->serviceContainer->getConnectionMethod() != null) {
+                $this->setConnectionMethod($this->serviceContainer->getConnectionMethod());
+            }
+            if($this->serviceContainer->getConnectionParams() != null) {
+                $this->setConnectionParams($this->serviceContainer->getConnectionParams());
+            }
+            if($this->serviceContainer->getAction() != null) {
+                $this->setAction($this->serviceContainer->getAction());
+            }
+
+            return $this;
+        }
     }
 }

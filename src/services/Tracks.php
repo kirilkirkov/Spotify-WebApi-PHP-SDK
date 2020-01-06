@@ -7,13 +7,17 @@ namespace SpotifyWebAPI\Services;
  * Spotify Tracks Service
  */
 
-class Tracks
+class Tracks implements InterfaceSpotifyService
 {
     const GET_AUDIO_ANALYSIS = '/v1/audio-analysis/{id}';
     const GET_AUDIO_FEATURES = '/v1/audio-features/{id}';
     const GET_AUDIOS_FEATURES = '/v1/audio-features';
     const GET_TRACKS = '/v1/tracks';
     const GET_TRACK = '/v1/tracks/{id}';
+
+    private $method;
+    private $params;
+    private $action;
 
     /**
      * Get Audio Analysis for a Track
@@ -23,7 +27,7 @@ class Tracks
     public function getAudioAnalysis($id)
     {
         $this->setConnectionMethod('GET');
-        $this->action = str_replace('{id}', $id, self::GET_AUDIO_ANALYSIS); 
+        $this->setAction(str_replace('{id}', $id, self::GET_AUDIO_ANALYSIS)); 
     }
 
     /**
@@ -34,7 +38,7 @@ class Tracks
     public function getAudioFeatures($id)
     {
         $this->setConnectionMethod('GET');
-        $this->action = str_replace('{id}', $id, self::GET_AUDIO_FEATURES); 
+        $this->setAction(str_replace('{id}', $id, self::GET_AUDIO_FEATURES)); 
     }
 
     /**
@@ -48,7 +52,7 @@ class Tracks
         $ids_string = implode(',', $ids);
         $this->setConnectionParams(['ids' => $ids_string]);
         $this->setConnectionMethod('GET');
-        $this->action = self::GET_AUDIOS_FEATURES;
+        $this->setAction(self::GET_AUDIOS_FEATURES);
     }
 
     /**
@@ -62,7 +66,7 @@ class Tracks
         $ids_string = implode(',', $ids);
         $this->setConnectionParams(['ids' => $ids_string]);
         $this->setConnectionMethod('GET');
-        $this->action = self::GET_TRACKS;
+        $this->setAction(self::GET_TRACKS);
     }
 
     /**
@@ -73,6 +77,36 @@ class Tracks
     public function getTrack($id)
     {
         $this->setConnectionMethod('GET');
-        $this->action = str_replace('{id}', $id, self::GET_TRACK); 
+        $this->setAction(str_replace('{id}', $id, self::GET_TRACK)); 
+    }
+
+    private function setConnectionMethod($method)
+    {
+        $this->method = $method;
+    }
+
+    public function getConnectionMethod()
+    {
+        return $this->method;
+    }
+
+    private function setConnectionParams($params)
+    {
+        $this->params = $params;
+    }
+
+    public function getConnectionParams()
+    {
+        return $this->params;
+    }
+
+    private function setAction($action)
+    {
+        $this->action = $action;
+    }
+
+    public function getAction()
+    {
+        return $this->action;
     }
 }

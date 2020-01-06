@@ -8,7 +8,7 @@ composer require kirilkirkov/spotify-webapi-sdk
 ## Doesnt have token?
 
 ### Get access token with client credentials
-$token = $this->spotifyWebApi->getAccessTokenWithCredentials(
+$token = $spotifyWebApi->getAccessTokenWithCredentials(
     'f6e1137695fb495994040a437d9d38a0',
     '18d0bbec9ec4494eb5d4e6e6d97c4e0a'
 );
@@ -16,20 +16,22 @@ echo $token;
 
 ### Get access token with code authorization
 Get redirect url for code:
-$url = $this->spotifyWebApi->getUrlForCodeToken(
-    'f6e1137695fb495994040a437d9d38a0',
-    'http://apollo.localhost/callback'
-);
+$spotifyWebApi = new SpotifyWebApi([
+    'clientId' => 'f6e1137695fb495994040a437d9d38a0',
+    'clientSecret' => '18d0bbec9ec4494eb5d4e6e6d97c4e0a',
+]);
+
+$callBackUrl = 'http://apollo.localhost/callback';
+$url = $spotifyWebApi->getUrlForCodeToken($callBackUrl);
 header("Location: {$url}");
+
 In the provided callback url (http://apollo.localhost/callback) will be returned $_GET['code'] parameter 
 with the code that can get token with following command:
-$accessToken = $this->spotifyWebApi->getAccessTokenWithCode(
-    'f6e1137695fb495994040a437d9d38a0',
-    '18d0bbec9ec4494eb5d4e6e6d97c4e0a',
-    'AQCopNupLMEYhgGbt4pp1dsy5NoCSqoJ5Q3LZ9IBqUHAmBd7FVJ9e-u-ggSmtTRWiP94RGW-xxj7eLTqNCa6FE-MvlgykPpvuvmhzIKEPLW8fCKX-ff5WOn4PE7EtGf0E5LoXNLku1P1NjP5kckPFVolWlpIHpNtvPtFoROUDhp5XGvfiavPsnj-GZCNLYJpyTOf0evA',
+$tokens = $spotifyWebApi->getAccessTokenWithCode(
+    'AQCT-KP6JcHiz5RieCMLvyGeKPlvMQQMbSWU5nsDfNzo77vbmWqG8dUDhJhX17f_nPMhXQ0V4bJ_yPdCyxjCyRkWS7A8omyVteFw-KLngL-NDdLvm4Lv2BOqWd-tvS7sj5dRtaJkP4FrPJpbEH78N8FP0D_H_G0iyODQmDHvw5Y9KgQEJ59ObINCEXD8ktSAoY8bmNYv',
     'http://apollo.localhost/callback'
 );
-And you will receive $accessToken and $refreshToken.
+And you will receive array with $accessToken and $refreshToken.
 
 ### Functions
 After initialization with valid access token (new SpotifyWebApi($myToken))

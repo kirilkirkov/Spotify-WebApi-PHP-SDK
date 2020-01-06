@@ -7,12 +7,16 @@ namespace SpotifyWebAPI\Services;
  * Spotify Library Service
  */
 
-class Library
+class Library implements InterfaceSpotifyService
 {
     const CHECK_SAVED_ALBUMS = '/v1/me/albums/contains';
     const CHECK_SAVED_TRACKS = '/v1/me/tracks/contains';
     const GET_MY_ALBUMS = '/v1/me/albums';
     const GET_MY_TRACKS = '/v1/me/tracks';
+
+    private $method;
+    private $params;
+    private $action;
     
     /**
      * Check User's Saved Albums
@@ -25,7 +29,7 @@ class Library
         $ids_string = implode(',', $ids);
         $this->setConnectionParams(['ids' => $ids_string]);
         $this->setConnectionMethod('GET');
-        $this->action = self::CHECK_SAVED_ALBUMS;
+        $this->setAction(self::CHECK_SAVED_ALBUMS);
         return $this;
     }
 
@@ -40,7 +44,7 @@ class Library
         $ids_string = implode(',', $ids);
         $this->setConnectionParams(['ids' => $ids_string]);
         $this->setConnectionMethod('GET');
-        $this->action = self::CHECK_SAVED_TRACKS;
+        $this->setAction(self::CHECK_SAVED_TRACKS);
         return $this;
     }
 
@@ -51,7 +55,7 @@ class Library
     public function getMyAlbums()
     {
         $this->setConnectionMethod('GET');
-        $this->action = self::GET_MY_ALBUMS;
+        $this->setAction(self::GET_MY_ALBUMS);
         return $this;
     }
 
@@ -62,7 +66,7 @@ class Library
     public function getMyTracks()
     {
         $this->setConnectionMethod('GET');
-        $this->action = self::GET_MY_TRACKS;
+        $this->setAction(self::GET_MY_TRACKS);
         return $this;
     }
 
@@ -77,7 +81,7 @@ class Library
         $ids_string = implode(',', $ids);
         $this->setConnectionParams(['ids' => $ids_string]);
         $this->setConnectionMethod('DELETE');
-        $this->action = self::GET_MY_ALBUMS;
+        $this->setAction(self::GET_MY_ALBUMS);
         return $this;
     }
 
@@ -92,7 +96,7 @@ class Library
         $ids_string = implode(',', $ids);
         $this->setConnectionParams(['ids' => $ids_string]);
         $this->setConnectionMethod('DELETE');
-        $this->action = self::GET_MY_TRACKS;
+        $this->setAction(self::GET_MY_TRACKS);
         return $this;
     }
 
@@ -107,7 +111,7 @@ class Library
         $ids_string = implode(',', $ids);
         $this->setConnectionParams(['ids' => $ids_string]);
         $this->setConnectionMethod('PUT');
-        $this->action = self::GET_MY_ALBUMS;
+        $this->setAction(self::GET_MY_ALBUMS);
         return $this;
     }
 
@@ -122,7 +126,37 @@ class Library
         $ids_string = implode(',', $ids);
         $this->setConnectionParams(['ids' => $ids_string]);
         $this->setConnectionMethod('PUT');
-        $this->action = self::GET_MY_TRACKS;
+        $this->setAction(self::GET_MY_TRACKS);
         return $this;
+    }
+
+    private function setConnectionMethod($method)
+    {
+        $this->method = $method;
+    }
+
+    public function getConnectionMethod()
+    {
+        return $this->method;
+    }
+
+    private function setConnectionParams($params)
+    {
+        $this->params = $params;
+    }
+
+    public function getConnectionParams()
+    {
+        return $this->params;
+    }
+
+    private function setAction($action)
+    {
+        $this->action = $action;
+    }
+
+    public function getAction()
+    {
+        return $this->action;
     }
 }
