@@ -29,7 +29,7 @@ class SpotifyConnection extends \SpotifyWebAPI\SpotifyRequests
     private $requestContentType;
 
     private $lastRequest = [];
-    private $manualRefreshToken = false;
+    private $returnNewTokenIfIsExpired = false;
 
     /**
      * Set Generated Access Token
@@ -200,7 +200,7 @@ class SpotifyConnection extends \SpotifyWebAPI\SpotifyRequests
     private function errorHandler(SpotifyWebAPIException $e)
     {
         if($e->hasExpiredToken()) {
-            if($this->manualRefreshToken === false) {
+            if($this->returnNewTokenIfIsExpired === false) {
                 $this->refreshTokenAndReCallLastRequest();
             } else {
                 $this->refreshTokenAndReturnBack();
@@ -232,9 +232,9 @@ class SpotifyConnection extends \SpotifyWebAPI\SpotifyRequests
         }
     }
 
-    public function manualRefreshToken($status = true)
+    public function returnNewTokenIfIsExpired($status = true)
     {
-        $this->manualRefreshToken = $status;
+        $this->returnNewTokenIfIsExpired = $status;
     }
 
     private function setLastRequest()
