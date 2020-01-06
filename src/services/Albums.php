@@ -22,7 +22,7 @@ class Albums implements InterfaceSpotifyService
      * Authorization - Required
      * @param array $ids Array with ids of ablums.
      */
-    public function get($ids)
+    public function getAlbums($ids)
     {
         $ids = (array)$ids;
         $ids_string = implode(',', $ids);
@@ -49,7 +49,7 @@ class Albums implements InterfaceSpotifyService
      * Authorization - Required
      * @param string $id Id of album.
      */
-    public function getOne($id)
+    public function getAlbum($id)
     {
         $this->setConnectionMethod('GET');
         $this->setAction(str_replace('{id}', $id, self::GET_ALBUM));
