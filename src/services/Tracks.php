@@ -15,10 +15,6 @@ class Tracks implements InterfaceSpotifyService
     const GET_TRACKS = '/v1/tracks';
     const GET_TRACK = '/v1/tracks/{id}';
 
-    private $method;
-    private $params;
-    private $action;
-
     /**
      * Get Audio Analysis for a Track
      * Authorization - Required
@@ -26,8 +22,10 @@ class Tracks implements InterfaceSpotifyService
      */
     public function getAudioAnalysis($id)
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(str_replace('{id}', $id, self::GET_AUDIO_ANALYSIS)); 
+        return [
+            'requestType' => 'GET',
+            'uri' => str_replace('{id}', $id, self::GET_AUDIO_ANALYSIS),
+        ];
     }
 
     /**
@@ -37,8 +35,10 @@ class Tracks implements InterfaceSpotifyService
      */
     public function getAudioFeatures($id)
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(str_replace('{id}', $id, self::GET_AUDIO_FEATURES)); 
+        return [
+            'requestType' => 'GET',
+            'uri' => str_replace('{id}', $id, self::GET_AUDIO_FEATURES),
+        ];
     }
 
     /**
@@ -48,11 +48,11 @@ class Tracks implements InterfaceSpotifyService
      */
     public function getAudiosFeatures($ids)
     {
-        $ids = (array)$ids;
-        $ids_string = implode(',', $ids);
-        $this->setConnectionParams(['ids' => $ids_string]);
-        $this->setConnectionMethod('GET');
-        $this->setAction(self::GET_AUDIOS_FEATURES);
+        return [
+            'queryString' => ['ids' => implode(',', $ids)],
+            'requestType' => 'GET',
+            'uri' => self::GET_AUDIOS_FEATURES,
+        ];
     }
 
     /**
@@ -60,13 +60,13 @@ class Tracks implements InterfaceSpotifyService
      * Authorization - Required
      * @param string $ids - Ids of the tracks.
      */
-    public function getTracks($ids)
+    public function getTracks(Array $ids)
     {
-        $ids = (array)$ids;
-        $ids_string = implode(',', $ids);
-        $this->setConnectionParams(['ids' => $ids_string]);
-        $this->setConnectionMethod('GET');
-        $this->setAction(self::GET_TRACKS);
+        return [
+            'queryString' => ['ids' => implode(',', $ids)],
+            'requestType' => 'GET',
+            'uri' => self::GET_TRACKS,
+        ];
     }
 
     /**
@@ -76,37 +76,9 @@ class Tracks implements InterfaceSpotifyService
      */
     public function getTrack($id)
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(str_replace('{id}', $id, self::GET_TRACK)); 
-    }
-
-    private function setConnectionMethod($method)
-    {
-        $this->method = $method;
-    }
-
-    public function getConnectionMethod()
-    {
-        return $this->method;
-    }
-
-    private function setConnectionParams($params)
-    {
-        $this->params = $params;
-    }
-
-    public function getConnectionParams()
-    {
-        return $this->params;
-    }
-
-    private function setAction($action)
-    {
-        $this->action = $action;
-    }
-
-    public function getAction()
-    {
-        return $this->action;
+        return [
+            'requestType' => 'GET',
+            'uri' => str_replace('{id}', $id, self::GET_TRACK),
+        ];
     }
 }

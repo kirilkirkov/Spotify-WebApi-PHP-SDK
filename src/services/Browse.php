@@ -7,7 +7,7 @@ namespace SpotifyWebAPI\Services;
  * Spotify Browse Service
  */
 
-class Browse implements InterfaceSpotifyService
+class Browse
 {
     const GET_CATEGORY = '/v1/browse/categories/{category_id}';
     const GET_CATEGORY_PLAYLISTS = '/v1/browse/categories/{category_id}/playlists';
@@ -16,20 +16,18 @@ class Browse implements InterfaceSpotifyService
     const GET_NEW_RELEASES = '/v1/browse/new-releases';
     const GET_RECOMMENDATIONS_SEEDS = '/v1/recommendations';
 
-    private $method;
-    private $params;
-    private $action;
 
     /**
      * Get a Category
      * Authorization - Required
      * @param string $category_id Id of category.
      */
-    public function getCategory($category_id)
+    public static function getCategory($category_id)
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(str_replace('{category_id}', $category_id, self::GET_CATEGORY));
-        return $this;
+        return [
+            'requestType' => 'GET',
+            'uri' => str_replace('{category_id}', $category_id, self::GET_CATEGORY),
+        ];
     }
 
     /**
@@ -37,88 +35,63 @@ class Browse implements InterfaceSpotifyService
      * Authorization - Required
      * @param string $category_id Id of category.
      */
-    public function getCategoryPlaylists($category_id)
+    public static function getCategoryPlaylists($category_id)
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(str_replace('{category_id}', $category_id, self::GET_CATEGORY_PLAYLISTS));
         SpotifyPagination::setHasPagination(true);
-        return $this;
+        return [
+            'requestType' => 'GET',
+            'uri' => str_replace('{category_id}', $category_id, self::GET_CATEGORY_PLAYLISTS),
+        ];
     }
 
     /**
      * Get a List of Categories
      * Authorization - Required
      */
-    public function getCategoriesList()
+    public static function getCategoriesList()
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(self::GET_CATEGORIES_LIST);
         SpotifyPagination::setHasPagination(true);
-        return $this;
+        return [
+            'requestType' => 'GET',
+            'uri' => self::GET_CATEGORIES_LIST,
+        ];
     }
 
     /**
      * Get a List of Featured Playlists
      * Authorization - Required
      */
-    public function getFeaturedPlaylists()
+    public static function getFeaturedPlaylists()
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(self::GET_FEATURED_PLAYLISTS);
         SpotifyPagination::setHasPagination(true);
-        return $this;
+        return [
+            'requestType' => 'GET',
+            'uri' => self::GET_FEATURED_PLAYLISTS,
+        ];
     }
 
     /**
      * Get a List of New Releases
      * Authorization - Required
      */
-    public function getNewReleases()
+    public static function getNewReleases()
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(self::GET_NEW_RELEASES);
         SpotifyPagination::setHasPagination(true);
-        return $this;
+        return [
+            'requestType' => 'GET',
+            'uri' => self::GET_NEW_RELEASES,
+        ];
     }
 
     /**
      * Get Recommendations Based on Seeds
      * Authorization - Required
      */
-    public function getRecommendationsSeeds()
+    public static function getRecommendationsSeeds()
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(self::GET_RECOMMENDATIONS_SEEDS);
-        return $this;
-    }
-
-    private function setConnectionMethod($method)
-    {
-        $this->method = $method;
-    }
-
-    public function getConnectionMethod()
-    {
-        return $this->method;
-    }
-
-    private function setConnectionParams($params)
-    {
-        $this->params = $params;
-    }
-
-    public function getConnectionParams()
-    {
-        return $this->params;
-    }
-
-    private function setAction($action)
-    {
-        $this->action = $action;
-    }
-
-    public function getAction()
-    {
-        return $this->action;
+        return [
+            'requestType' => 'GET',
+            'uri' => self::GET_RECOMMENDATIONS_SEEDS,
+        ];
     }
 }

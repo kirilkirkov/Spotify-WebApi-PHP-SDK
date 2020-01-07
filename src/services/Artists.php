@@ -7,7 +7,7 @@ namespace SpotifyWebAPI\Services;
  * Spotify Artists Service
  */
 
-class Artists implements InterfaceSpotifyService
+class Artists
 {
     const GET_ARTIST = '/v1/artists/{id}';
     const GET_ARTIST_ALBUMS = '/v1/artists/{id}/albums';
@@ -15,20 +15,17 @@ class Artists implements InterfaceSpotifyService
     const GET_ARTIST_RELATED_ARTISTS = '/v1/artists/{id}/related-artists';
     const GET_ARTISTS = '/v1/artists';
 
-    private $method;
-    private $params;
-    private $action;
-
     /**
      * Get an Artist
      * Authorization - Required
      * @param string $id Id of artist.
      */
-    public function getArtist($id)
+    public static function getArtist($id)
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(str_replace('{id}', $id, self::GET_ARTIST));
-        return $this;
+        return [
+            'requestType' => 'GET',
+            'uri' => str_replace('{id}', $id, self::GET_ARTIST),
+        ];
     }
 
     /**
@@ -36,12 +33,13 @@ class Artists implements InterfaceSpotifyService
      * Authorization - Required
      * @param string $id Id of artist.
      */
-    public function getArtistAlbums($id)
+    public static function getArtistAlbums($id)
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(str_replace('{id}', $id, self::GET_ARTIST_ALBUMS));
         SpotifyPagination::setHasPagination(true);
-        return $this;
+        return [
+            'requestType' => 'GET',
+            'uri' => str_replace('{id}', $id, self::GET_ARTIST_ALBUMS),
+        ];
     }
 
     /**
@@ -49,11 +47,12 @@ class Artists implements InterfaceSpotifyService
      * Authorization - Required
      * @param string $id Id of artist.
      */
-    public function getArtistTopTracks($id)
+    public static function getArtistTopTracks($id)
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(str_replace('{id}', $id, self::GET_ARTIST_TOP_TRACKS));
-        return $this;
+        return [
+            'requestType' => 'GET',
+            'uri' => str_replace('{id}', $id, self::GET_ARTIST_TOP_TRACKS),
+        ];
     }
 
     /**
@@ -61,11 +60,12 @@ class Artists implements InterfaceSpotifyService
      * Authorization - Required
      * @param string $id Id of artist.
      */
-    public function getArtistRelatedArtists($id)
+    public static function getArtistRelatedArtists($id)
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(str_replace('{id}', $id, self::GET_ARTIST_RELATED_ARTISTS));
-        return $this;
+        return [
+            'requestType' => 'GET',
+            'uri' => str_replace('{id}', $id, self::GET_ARTIST_RELATED_ARTISTS),
+        ];
     }
 
     /**
@@ -73,43 +73,13 @@ class Artists implements InterfaceSpotifyService
      * Authorization - Required
      * @param array $ids Array with ids.
      */
-    public function getArtists($ids)
+    public static function getArtists(Array $ids)
     {
-        $ids = (array)$ids;
         $ids_string = implode(',', $ids);
-        $this->setConnectionParams(['ids' => $ids_string]);
-        $this->setConnectionMethod('GET');
-        $this->setAction(self::GET_ARTISTS);
-        return $this;
-    }
-
-    private function setConnectionMethod($method)
-    {
-        $this->method = $method;
-    }
-
-    public function getConnectionMethod()
-    {
-        return $this->method;
-    }
-
-    private function setConnectionParams($params)
-    {
-        $this->params = $params;
-    }
-
-    public function getConnectionParams()
-    {
-        return $this->params;
-    }
-
-    private function setAction($action)
-    {
-        $this->action = $action;
-    }
-
-    public function getAction()
-    {
-        return $this->action;
+        return [
+            'queryString' => ['ids' => $ids_string],
+            'requestType' => 'GET',
+            'uri' => self::GET_ARTISTS,
+        ];
     }
 }

@@ -11,10 +11,6 @@ class Search implements InterfaceSpotifyService
 {
     const SEARCH = '/v1/search';
 
-    private $method;
-    private $params;
-    private $action;
-
     /**
      * Search for an Item
      * Authorization - Required
@@ -23,39 +19,11 @@ class Search implements InterfaceSpotifyService
      */
     public function search($q, $type)
     {
-        $this->setConnectionParams(['q' => $q, 'type' => $type]);
-        $this->setConnectionMethod('GET');
         SpotifyPagination::setHasPagination(true);
-        $this->setAction(self::SEARCH);
-    }
-
-    private function setConnectionMethod($method)
-    {
-        $this->method = $method;
-    }
-
-    public function getConnectionMethod()
-    {
-        return $this->method;
-    }
-
-    private function setConnectionParams($params)
-    {
-        $this->params = $params;
-    }
-
-    public function getConnectionParams()
-    {
-        return $this->params;
-    }
-
-    private function setAction($action)
-    {
-        $this->action = $action;
-    }
-
-    public function getAction()
-    {
-        return $this->action;
+        return [
+            'queryString' => ['q' => $q, 'type' => $type],
+            'requestType' => 'GET',
+            'uri' => self::SEARCH,
+        ];
     }
 }

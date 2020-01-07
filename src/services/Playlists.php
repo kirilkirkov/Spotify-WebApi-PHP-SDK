@@ -7,7 +7,7 @@ namespace SpotifyWebAPI\Services;
  * Spotify Playlists Service
  */
 
-class Playlists implements InterfaceSpotifyService
+class Playlists
 {
 
     const PLAYLIST_TRACKS = '/v1/playlists/{playlist_id}/tracks';
@@ -16,24 +16,19 @@ class Playlists implements InterfaceSpotifyService
     const GET_PLAYLISTS = '/v1/me/playlists';
     const PLAYLIST_IMAGES = '/v1/playlists/{playlist_id}/images';
 
-    private $method;
-    private $params;
-    private $action;
-
     /**
      * Add Tracks to a Playlist
      * Authorization - Required
      * @param string $playlist_id - Playlist id.
      * @param array $uris - Uris of tracks to add. Example one uri: spotify:track:4iV5W9uYEdYUVa79Axb7Rh
      */
-    public function addTrackToPlaylist($playlist_id, $uris)
+    public static function addTrackToPlaylist($playlist_id, Array $uris)
     {
-        $uris = (array)$uris;
-        $uris_string = implode(',', $uris);
-        $this->setConnectionParams(['uris' => $uris_string]);
-        $this->setConnectionMethod('POST');
-        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS));
-        return $this;
+        return [
+            'queryString' => ['uris' => implode(',', $uris)],
+            'requestType' => 'POST',
+            'uri' => str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS),
+        ];
     }
 
     /**
@@ -42,12 +37,13 @@ class Playlists implements InterfaceSpotifyService
      * @param string $playlist_id - Playlist id.
      * @param array $values - name - string, public - Boolean, collaborative - Boolen, description - string
      */
-    public function updatePlaylist($playlist_id, $values)
+    public static function updatePlaylist(String $playlist_id, Array $values)
     {
-        $this->setConnectionParams($values);
-        $this->setConnectionMethod('PUT');
-        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::GET_PLAYLIST));
-        return $this;
+        return [
+            'queryString' => $values,
+            'requestType' => 'PUT',
+            'uri' => str_replace('{playlist_id}', $playlist_id, self::GET_PLAYLIST),
+        ];
     }
 
     /**
@@ -56,24 +52,26 @@ class Playlists implements InterfaceSpotifyService
      * @param string $user_id - The user’s Spotify user ID.
      * @param array $values - name - string, public - Boolean, collaborative - Boolen, description - string
      */
-    public function createPlaylist($user_id, $values)
+    public static function createPlaylist(String $user_id, Array $values)
     {
-        $this->setConnectionParams($values);
-        $this->setConnectionMethod('POST');
-        $this->setAction(str_replace('{user_id}', $user_id, self::USERS_PLAYLISTS));
-        return $this;
+        return [
+            'queryString' => $values,
+            'requestType' => 'POST',
+            'uri' => str_replace('{user_id}', $user_id, self::USERS_PLAYLISTS),
+        ];
     }
 
     /**
      * Get a List of Current User's Playlists
      * Authorization - Required
      */
-    public function getPlaylists()
+    public static function getPlaylists()
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(self::GET_PLAYLISTS);
         SpotifyPagination::setHasPagination(true);
-        return $this;
+        return [
+            'requestType' => 'GET',
+            'uri' => self::GET_PLAYLISTS,
+        ];
     }
 
     /**
@@ -81,12 +79,13 @@ class Playlists implements InterfaceSpotifyService
      * Authorization - Required
      * @param string $user_id - The user’s Spotify user ID.
      */
-    public function getUsersPlaylists($user_id)
+    public static function getUsersPlaylists($user_id)
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(str_replace('{user_id}', $user_id, self::USERS_PLAYLISTS));
         SpotifyPagination::setHasPagination(true);
-        return $this;
+        return [
+            'requestType' => 'GET',
+            'uri' => str_replace('{user_id}', $user_id, self::USERS_PLAYLISTS),
+        ];
     }
 
     /**
@@ -94,11 +93,12 @@ class Playlists implements InterfaceSpotifyService
      * Authorization - Required
      * @param string $playlist_id - Playlist id.
      */
-    public function getPlaylistCover($playlist_id)
+    public static function getPlaylistCover($playlist_id)
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_IMAGES));
-        return $this;
+        return [
+            'requestType' => 'GET',
+            'uri' => str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_IMAGES),
+        ];
     }
 
     /**
@@ -106,11 +106,12 @@ class Playlists implements InterfaceSpotifyService
      * Authorization - Required
      * @param string $playlist_id - Playlist id.
      */
-    public function getPlaylist($playlist_id)
+    public static function getPlaylist($playlist_id)
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::GET_PLAYLIST));
-        return $this;
+        return [
+            'requestType' => 'GET',
+            'uri' => str_replace('{playlist_id}', $playlist_id, self::GET_PLAYLIST),
+        ];
     }
 
     /**
@@ -118,12 +119,13 @@ class Playlists implements InterfaceSpotifyService
      * Authorization - Required
      * @param string $playlist_id - Playlist id.
      */
-    public function getPlaylistTracks($playlist_id)
+    public static function getPlaylistTracks(String $playlist_id)
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS));
         SpotifyPagination::setHasPagination(true);
-        return $this;
+        return [
+            'requestType' => 'GET',
+            'uri' => str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS),
+        ];
     }
 
     /**
@@ -132,14 +134,13 @@ class Playlists implements InterfaceSpotifyService
      * @param string $playlist_id - Playlist id.
      * @param array $tracks - Uris of tracks to add. Example one uri: spotify:track:4iV5W9uYEdYUVa79Axb7Rh
      */
-    public function playlistRemoveTracks($playlist_id, $tracks)
+    public static function playlistRemoveTracks(String $playlist_id, Array $tracks)
     {
-        $tracks = (array)$uris;
-        $tracks_string = implode(',', $tracks);
-        $this->setConnectionParams(['tracks' => $tracks_string]);
-        $this->setConnectionMethod('DELETE');
-        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS));
-        return $this;
+        return [
+            'queryString' => ['tracks' => implode(',', $tracks)],
+            'requestType' => 'DELETE',
+            'uri' => str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS),
+        ];
     }
 
     /**
@@ -148,12 +149,13 @@ class Playlists implements InterfaceSpotifyService
      * @param string $playlist_id - Playlist id.
      * @param array $params - range_start: integer, range_length: integer, insert_before: integer, snapshot_id: string
      */
-    public function reorderPlaylistTracks($playlist_id, $params)
+    public static function reorderPlaylistTracks(String $playlist_id, Array $params)
     {
-        $this->setConnectionParams($params);
-        $this->setConnectionMethod('PUT');
-        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS));
-        return $this;
+        return [
+            'queryString' => $params,
+            'requestType' => 'PUT',
+            'uri' => str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS),
+        ];
     }
 
     /**
@@ -162,13 +164,13 @@ class Playlists implements InterfaceSpotifyService
      * @param string $playlist_id - Playlist id.
      * @param array $uris - Uris of tracks to add. Example one uri: spotify:track:4iV5W9uYEdYUVa79Axb7Rh
      */
-    public function replacePlaylistTracks($playlist_id, $uris)
+    public static function replacePlaylistTracks(String $playlist_id, Array $uris)
     {
-        $uris = (array)$uris;
-        $uris_string = implode(',', $uris);
-        $this->setConnectionParams(['uris' => $uris_string]);
-        $this->setConnectionMethod('PUT');
-        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS)); 
+        return [
+            'queryString' => ['uris' => implode(',', $uris)],
+            'requestType' => 'PUT',
+            'uri' => str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS),
+        ];
     }
 
     /**
@@ -177,41 +179,12 @@ class Playlists implements InterfaceSpotifyService
      * @param string $playlist_id - Playlist id.
      * @param string $image - Base64 encoded JPEG image data, maximum payload size is 256 KB
      */
-    public function uploadPlaylistCover($playlist_id, $image)
+    public static function uploadPlaylistCover(String $playlist_id, $image)
     {
-        $this->setConnectionParams($image);
-        $this->setRequestContentType('image/jpeg');
-        $this->setConnectionMethod('PUT');
-        $this->setAction(str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_IMAGES)); 
-    }
-
-    private function setConnectionMethod($method)
-    {
-        $this->method = $method;
-    }
-
-    public function getConnectionMethod()
-    {
-        return $this->method;
-    }
-
-    private function setConnectionParams($params)
-    {
-        $this->params = $params;
-    }
-
-    public function getConnectionParams()
-    {
-        return $this->params;
-    }
-
-    private function setAction($action)
-    {
-        $this->action = $action;
-    }
-
-    public function getAction()
-    {
-        return $this->action;
+        return [
+            'queryString' => $image,
+            'requestType' => 'PUT',
+            'uri' => str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_IMAGES),
+        ];
     }
 }

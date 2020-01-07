@@ -20,9 +20,8 @@ class Albums
      * Authorization - Required
      * @param array $ids Array with ids of ablums.
      */
-    public static function getAlbums($ids)
+    public static function getAlbums(Array $ids)
     {
-        $ids = (array)$ids;
         $ids_string = implode(',', $ids);
         return [
             'queryString' => ['ids' => $ids_string],

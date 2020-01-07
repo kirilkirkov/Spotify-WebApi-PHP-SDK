@@ -7,7 +7,7 @@ namespace SpotifyWebAPI\Services;
  * Spotify Player Service
  */
 
-class Player implements InterfaceSpotifyService
+class Player
 {
     const PLAYER_DEVICES = '/v1/me/player/devices';
     const ME_PLAYER = '/v1/me/player';
@@ -23,64 +23,65 @@ class Player implements InterfaceSpotifyService
     const PLAYER_SHUFFLE = '/v1/me/player/shuffle';
     const PLAYER_TRANSFER = '/v1/me/player';
 
-    private $method;
-    private $params;
-    private $action;
-
     /**
      * Get a User's Available Devices
      * Authorization - Required
      */
-    public function getPlayerDevices()
+    public static function getPlayerDevices()
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(self::PLAYER_DEVICES);
-        return $this;
+        return [
+            'requestType' => 'GET',
+            'uri' => self::PLAYER_DEVICES,
+        ];
     }
 
     /**
      * Get Information About The User's Current Playback
      * Authorization - Required
      */
-    public function getPlayer()
+    public static function getPlayer()
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(self::ME_PLAYER);
-        return $this;
+        return [
+            'requestType' => 'GET',
+            'uri' => self::ME_PLAYER,
+        ];
     }
 
     /**
      * Get Current User's Recently Played Tracks
      * Authorization - Required
      */
-    public function getRecentPlayedTracks()
+    public static function getRecentPlayedTracks()
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(self::RECENT_PLAYED);
         SpotifyPagination::setHasPagination(true);
-        return $this;
+        return [
+            'requestType' => 'GET',
+            'uri' => self::RECENT_PLAYED,
+        ];
     }
 
     /**
      * Get the User's Currently Playing Track
      * Authorization - Required
      */
-    public function getPlayingTrack()
+    public static function getPlayingTrack()
     {
-        $this->setConnectionMethod('GET');
-        $this->setAction(self::PLAYING_TRACK);
-        return $this;
+        return [
+            'requestType' => 'GET',
+            'uri' => self::PLAYING_TRACK,
+        ];
     }
 
     /**
      * Pause a User's Playback
      * Authorization - Required
      */
-    public function playerPause()
+    public static function playerPause()
     {
-        $this->setConnectionMethod('PUT');
-        $this->setAction(self::PLAYER_PAUSE);
-        return $this;
+        return [
+            'requestType' => 'PUT',
+            'uri' => self::PLAYER_PAUSE,
+        ];
     }
 
     /**
@@ -89,28 +90,28 @@ class Player implements InterfaceSpotifyService
      * 
      * @param int|string $position_ms The position in milliseconds to seek to. Must be a positive number
      */
-    public function seekOnPosition($position_ms)
+    public static function seekOnPosition(Int $position_ms)
     {
-        $this->setConnectionParams(['position_ms' => $position_ms]);
-        $this->setConnectionMethod('PUT');
-        $this->setAction(self::PLAYER_SEEK);
-        return $this;
+        return [
+            'queryString' => ['position_ms' => $position_ms],
+            'requestType' => 'PUT',
+            'uri' => self::PLAYER_SEEK,
+        ];
     }
     
     /**
      * Set Repeat Mode On User’s Playback
      * Authorization - Required
      * 
-     * @param string $position_ms track, context or off track will repeat the current track.
-     *  context will repeat the current context.
-     *  off will turn repeat off.
+     * @param string $state
      */
-    public function setRepeatMode($state)
+    public static function setRepeatMode($state)
     {
-        $this->setConnectionParams(['state' => $state]);
-        $this->setConnectionMethod('PUT');
-        $this->setAction(self::REPEAT_MODE);
-        return $this;
+        return [
+            'queryString' => ['state' => $state],
+            'requestType' => 'PUT',
+            'uri' => self::REPEAT_MODE,
+        ];
     }
 
     /**
@@ -119,12 +120,13 @@ class Player implements InterfaceSpotifyService
      * 
      * @param int $volume_percent The volume to set. Must be a value from 0 to 100 inclusive. 
      */
-    public function setPlayerVolume($volume_percent)
+    public static function setPlayerVolume($volume_percent)
     {
-        $this->setConnectionParams(['volume_percent' => $volume_percent]);
-        $this->setConnectionMethod('PUT');
-        $this->setAction(self::PLAYER_VOLUME);
-        return $this;
+        return [
+            'queryString' => ['volume_percent' => $volume_percent],
+            'requestType' => 'PUT',
+            'uri' => self::PLAYER_VOLUME,
+        ];
     }
 
     /**
@@ -132,11 +134,12 @@ class Player implements InterfaceSpotifyService
      * Authorization - Required
      * 
      */
-    public function playerGoNext()
+    public static function playerGoNext()
     {
-        $this->setConnectionMethod('POST');
-        $this->setAction(self::PLAYER_NEXT);
-        return $this;
+        return [
+            'requestType' => 'POST',
+            'uri' => self::PLAYER_NEXT,
+        ];
     }
 
     /**
@@ -144,11 +147,12 @@ class Player implements InterfaceSpotifyService
      * Authorization - Required
      * 
      */
-    public function playerGoPrevious()
+    public static function playerGoPrevious()
     {
-        $this->setConnectionMethod('POST');
-        $this->setAction(self::PLAYER_PREVIOUS);
-        return $this;
+        return [
+            'requestType' => 'POST',
+            'uri' => self::PLAYER_PREVIOUS,
+        ];
     }
 
     /**
@@ -156,11 +160,12 @@ class Player implements InterfaceSpotifyService
      * Authorization - Required
      * 
      */
-    public function playerPlay()
+    public static function playerPlay()
     {
-        $this->setConnectionMethod('PUT');
-        $this->setAction(self::PLAYER_PLAY);
-        return $this;
+        return [
+            'requestType' => 'PUT',
+            'uri' => self::PLAYER_PLAY,
+        ];
     }
 
     /**
@@ -168,12 +173,13 @@ class Player implements InterfaceSpotifyService
      * Authorization - Required
      * @param string $state - true : Shuffle user’s playback, false : Do not shuffle user’s playback
      */
-    public function playerShuffle($state)
+    public static function playerShuffle($state)
     {
-        $this->setConnectionParams(['state' => $state]);
-        $this->setConnectionMethod('PUT');
-        $this->setAction(self::PLAYER_SHUFFLE);
-        return $this;
+        return [
+            'queryString' => ['state' => $state],
+            'requestType' => 'PUT',
+            'uri' => self::PLAYER_SHUFFLE,
+        ];
     }
 
     /**
@@ -181,42 +187,12 @@ class Player implements InterfaceSpotifyService
      * Authorization - Required
      * @param array $device_id - Device id to be started/transferred.
      */
-    public function transferPlayback($device_id)
+    public static function transferPlayback($device_id)
     {
-        $device_ids = json_encode(['device_ids' => [$device_id]]);
-        $this->setConnectionParams(['device_ids' => $device_ids]);
-        $this->setConnectionMethod('PUT');
-        $this->setAction(self::PLAYER_TRANSFER);
-        return $this;
-    }
-
-    private function setConnectionMethod($method)
-    {
-        $this->method = $method;
-    }
-
-    public function getConnectionMethod()
-    {
-        return $this->method;
-    }
-
-    private function setConnectionParams($params)
-    {
-        $this->params = $params;
-    }
-
-    public function getConnectionParams()
-    {
-        return $this->params;
-    }
-
-    private function setAction($action)
-    {
-        $this->action = $action;
-    }
-
-    public function getAction()
-    {
-        return $this->action;
+        return [
+            'queryString' => ['device_ids' => json_encode(['device_ids' => [$device_id]])],
+            'requestType' => 'PUT',
+            'uri' => self::PLAYER_TRANSFER,
+        ];
     }
 }

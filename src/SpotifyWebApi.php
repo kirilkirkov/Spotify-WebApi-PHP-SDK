@@ -297,8 +297,10 @@ class SpotifyWebApi
             $this->headers = [];
             return $this;
         }
-        foreach($headers as $key=>$value) {
-            $this->headers[$key] = $value;
+        if(is_array($headers)) {
+            foreach($headers as $key=>$value) {
+                $this->headers[$key] = $value;
+            }
         }
         return $this;
     }
