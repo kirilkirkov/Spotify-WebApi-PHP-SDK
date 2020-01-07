@@ -312,11 +312,15 @@ class SpotifyWebApi
      * @param string $key Name of guzzle query parameter
      * @param string $value Value of guzzle query parameter
      */
-    private function setRequestParam($key, $value)
+    private function setRequestParam(String $key, $value)
     {
         $this->requestParams[$key] = $value;
     }
-
+    
+    private function setRequestParams(Array $params)
+    {
+        $this->requestParams = $params;
+    }
 
     private function clearAccessToken()
     {
@@ -350,6 +354,8 @@ class SpotifyWebApi
             } else {
                 $this->refreshTokenAndReturnBack();
             }
+        } elseif($e->invalidClient()) {
+            throw new SpotifyWebAPIException('Probably missing header Content-Type: application/x-www-form-urlencoded');
         } else {
             throw new SpotifyWebAPIException($e->getMessage());
         }
@@ -396,7 +402,7 @@ class SpotifyWebApi
     private function returnLastRequest()
     {
         if(isset($this->lastRequest['requestParams'])) {
-            $this->requestParams = $this->lastRequest['requestParams'];
+            $this->setRequestParams($this->lastRequest['requestParams']);
         }
         if(isset($this->lastRequest['requestType'])) {
             $this->setRequestType($this->lastRequest['requestType']);
