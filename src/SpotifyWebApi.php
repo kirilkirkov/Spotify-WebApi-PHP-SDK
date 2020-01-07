@@ -2,7 +2,8 @@
 
 namespace SpotifyWebAPI;
 
-use GuzzleHttp\Client;
+use \GuzzleHttp\Client as GuzzleClient;
+use Guzzle\Http\Exception\ClientErrorResponseException;
 
 /**
  * @author Kiril Kirkov
@@ -17,23 +18,27 @@ class SpotifyWebApi
     const ACCOUNT_URL = 'https://accounts.spotify.com';
     const API_URL = 'https://api.spotify.com';
 
+    // User Credentials
     private $accessToken;
     private $refreshToken;
     private $clientId;
     private $clientSecret;
     private $redirectUrl;
 
+    // Request params
     private $baseUri;
     private $requestType = 'GET';
-    private $queryString = [];
+    private $requestParams = [];
     private $uri;
-    private $headers = [];
+    private $headers = [
+        'Accept' => 'application/json',
+    ];
 
+    // Request result params
     private $rawResponseBody;
     private $response;
-    private $customHeaders;
-    private $requestContentType;
 
+    // Refresh token
     private $lastRequest = [];
     private $returnNewTokenIfIsExpired = false;
 
@@ -67,75 +72,6 @@ class SpotifyWebApi
         }
     }
 
-    /**
-     * Generate token with code - Step 1/2
-     * Send user to login after that redirect back with code for access token
-     * 
-     * @param string $redirectUri Callback url with returned $_GET['code'].
-     * @param string $clientId Optional Client Id if is not set in instance constructor.
-     * @param array $options Optional. Parameters - scope, show_dialog or state.
-     * @return string Authorization url to open in browser
-     */
-    public function getUrlForCodeToken(String $redirectUri = null, String $clientId = null, Array $options = [])
-    {
-        $options = $options;
-        $parameters = [
-            'client_id' => $clientId ?? $this->getClientId(),
-            'redirect_uri' => $redirectUri,
-            'response_type' => 'code',
-            'scope' => $options['code'] ?? null,
-            'show_dialog' => $options['show_dialog'] ?? null,
-            'state' => $options['state'] ?? null,
-        ];
-        return $this->account()->authorize()->setQueryString($parameters)->getPreparedUrl();
-    }
-
-    /**
-     * Generate token with code - Step 2/2
-     * Get the access token with the returned code
-     * 
-     * @param string $code Code for token.
-     * @param string $redirectUri Callback url with returned access token.
-     * @return array Access Token and Refresh Token
-     */
-    public function getAccessTokenWithCode(String $code, String $redirectUri)
-    {
-        $parameters = [
-            'code' => $code,
-            'grant_type' => 'authorization_code',
-            'redirect_uri' => $redirectUri,
-        ];
-
-        $this->setHeaders($this->getAuthorizationBasicHeader());
-        $response = $this->account()->token()->setQueryString($parameters)->getResult();
-        if(!isset($response->access_token)) {
-            throw new SpotifyWebAPIException('Access token missing in response');
-        }
-        return ['accessToken' => $response->access_token, 'refreshToken' => $response->refresh_token];
-    }
-
-    /**
-     * Get access token with client credentials
-     * Access token expires in 24 hours
-     * 
-     * @param string $clientId Client id.
-     * @param string $clientSecret Client secret.
-     * @return string Access Token
-     */
-    public function getAccessTokenWithCredentials(String $clientId, String $clientSecret)
-    {
-        $parameters = [
-            'grant_type' => 'client_credentials',
-        ];
-
-        $this->setHeaders($this->getAuthorizationBasicHeader());
-        $response = $this->account()->token()->setQueryString($parameters)->getResult();
-        if(!isset($response->access_token)) {
-            throw new SpotifyWebAPIException('Access token missing in response');
-        }
-        return $response->access_token;
-    }
-
     public function setPaginationLimit(Int $limit)
     {
         SpotifyPagination::setLimit($limit);
@@ -149,24 +85,6 @@ class SpotifyWebApi
     public function getPaginationTotal()
     {
         return SpotifyPagination::getTotal();
-    }
-
- 
- 
-    // Connector
- 
- 
- 
-    /**
-     * Set Generated Access Token
-     *
-     * @param string $acccessToken Valid access token.
-     */
-    public function setAccessToken(String $accessToken)
-    {
-        $this->accessToken = $accessToken;
-        $this->setHeaders('Authorization: Bearer ' . $this->accessToken);
-        return $this;
     }
 
     public function getAccessToken()
@@ -204,6 +122,42 @@ class SpotifyWebApi
         return $this->clientId;
     }
 
+    public function setRequestType(String $method)
+    {
+        $this->requestType = strtoupper($method);
+    }
+
+    public function getRequestType()
+    {
+        return $this->requestType;
+    }
+
+    public function setQueryString(Array $params)
+    {
+        $this->requestParams['form_params'] = $params;
+        return $this;
+    }
+
+    public function getQueryString()
+    {
+       return $this->queryString;
+    }
+
+    private function getHeaders()
+    {
+        return $this->headers;
+    }
+
+    private function getBaseUri()
+    {
+        return $this->baseUri;
+    }
+
+    private function setBaseUri($base_uri)
+    {
+        $this->baseUri = $base_uri;
+    }
+
     /**
      * Set Client Secret.
      *
@@ -218,7 +172,7 @@ class SpotifyWebApi
     {
         return $this->clientSecret;
     }
-
+    
     /**
      * @param string $uri Api uri
      */
@@ -233,6 +187,95 @@ class SpotifyWebApi
         return $this->uri;
     }
 
+    public function provider(Array $service)
+    {
+        array_walk($service, function(&$value, &$key) {
+            if(property_exists($this, $key)) {
+                $this->{$key} = $value;
+            }
+        });
+        return $this; 
+    }
+
+    /**
+     * Generate token with code - Step 1/2
+     * Send user to login after that redirect back with code for access token
+     * 
+     * @param string $redirectUri Callback url with returned $_GET['code'].
+     * @param string $clientId Optional Client Id if is not set in instance constructor.
+     * @param array $options Optional. Parameters - scope, show_dialog or state.
+     * @return string Authorization url to open in browser
+     */
+    public function getUrlForCodeToken(String $redirectUri = null, String $clientId = null, Array $options = [])
+    {
+        $options = $options;
+        $parameters = [
+            'client_id' => $clientId ?? $this->getClientId(),
+            'redirect_uri' => $redirectUri,
+            'response_type' => 'code',
+            'scope' => $options['code'] ?? null,
+            'show_dialog' => $options['show_dialog'] ?? null,
+            'state' => $options['state'] ?? null,
+        ];
+        return $this->account()->authorize()->setQueryString($parameters)->getPreparedUrl();
+    }
+
+    /**
+     * Generate token with code - Step 2/2
+     * Get the access token with the returned code
+     * 
+     * @param string $code Code for token.
+     * @param string $redirectUri Callback url with returned access token.
+     * @return array Access Token and Refresh Token
+     */
+    public function getAccessTokenWithCode(String $code, String $redirectUri)
+    {
+        $this->setRequestParam('auth', [$this->getClientId(), $this->getClientSecret()]);
+        return $this->account()->provider($this->service()->token())->setQueryString([
+            'code' => $code,
+            'grant_type' => 'authorization_code',
+            'redirect_uri' => $redirectUri,
+        ])->getResult();
+
+        if(!isset($response->access_token)) {
+            throw new SpotifyWebAPIException('Access token missing in response');
+        }
+        return ['accessToken' => $response->access_token, 'refreshToken' => $response->refresh_token];
+    }
+
+    /**
+     * Get access token with client credentials
+     * Access token expires in 24 hours
+     * 
+     * @param string $clientId Client id.
+     * @param string $clientSecret Client secret.
+     * @return string Access Token
+     */
+    public function getAccessTokenWithCredentials(String $clientId, String $clientSecret)
+    {
+        $this->setRequestParam('auth', [$this->getClientId(), $this->getClientSecret()]);
+        return $this->account()->provider($this->service()->token())->setQueryString([
+            'grant_type' => 'client_credentials',
+        ])->getResult();
+
+        if(!isset($response->access_token)) {
+            throw new SpotifyWebAPIException('Access token missing in response');
+        }
+        return $response->access_token;
+    }
+ 
+    /**
+     * Set Generated Access Token
+     *
+     * @param string $acccessToken Valid access token.
+     */
+    public function setAccessToken(String $accessToken)
+    {
+        $this->accessToken = $accessToken;
+        $this->setHeaders(['Authorization' => 'Bearer ' . $this->accessToken]);
+        return $this;
+    }
+
     public function account()
     {
         $this->setBaseUri(rtrim(self::ACCOUNT_URL, '/'));
@@ -245,32 +288,6 @@ class SpotifyWebApi
         return $this;
     }
 
-    public function setRequestType(String $method)
-    {
-        $this->requestType = strtoupper($method);
-    }
-
-    public function getRequestType()
-    {
-        return $this->requestType;
-    }
-
-    public function setQueryString(Array $params)
-    {
-        $this->queryString = $params;
-        return $this;
-    }
-
-    public function getQueryString()
-    {
-       return $this->queryString;
-    }
-
-    private function getHeaders()
-    {
-        return $this->headers;
-    }
-
     /**
      * @param string|array $headers Headers to send
      */
@@ -280,22 +297,54 @@ class SpotifyWebApi
             $this->headers = [];
             return $this;
         }
-        array_push($this->headers, $headers);
+        foreach($headers as $key=>$value) {
+            $this->headers[$key] = $value;
+        }
         return $this;
+    }
+
+    private function getRequestParams()
+    {
+        return $this->requestParams;
+    }
+
+    /**
+     * @param string $key Name of guzzle query parameter
+     * @param string $value Value of guzzle query parameter
+     */
+    private function setRequestParam($key, $value)
+    {
+        $this->requestParams[$key] = $value;
+    }
+
+
+    private function clearAccessToken()
+    {
+        $this->accessToken = null;
+        unset($this->headers['Authorization']);
     }
 
     public function sendRequest()
     {
-
-        $client = new GuzzleHttp\Client(['base_uri' => $this->getBaseUri(), 'headers' => $this->getHeaders()]);
-        $response = $client->request($this->getRequestType(), $this->getUri(), $this->getQueryString());
-
+        try {
+            $client = new GuzzleClient(['base_uri' => $this->getBaseUri(), 'headers' => $this->getHeaders()]);
+            $response = $client->request($this->getRequestType(), $this->getUri(), $this->getRequestParams());
+            $body = $response->getBody();
+            $this->response = $this->parseRawResponse((string)$body);
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $responseBody = json_decode($e->getResponse()->getBody()->getContents());
+            $this->errorHandler(new SpotifyWebAPIException($responseBody->error->message ?? $responseBody->error));
+        } catch (SpotifyWebAPIException $e) {
+            throw new SpotifyWebAPIException($e->getMessage());
+        }
+       
         return $this;
     }
     
     private function errorHandler(SpotifyWebAPIException $e)
     {
         if($e->hasExpiredToken()) {
+            $this->clearAccessToken();
             if($this->returnNewTokenIfIsExpired === false) {
                 $this->refreshTokenAndReCallLastRequest();
             } else {
@@ -312,6 +361,7 @@ class SpotifyWebApi
         if(!isset($result->access_token)) {
             throw new SpotifyWebAPIException('Cant find access token in refresh token response');
         }
+        return $result;
     }
 
     private function refreshTokenAndReCallLastRequest()
@@ -319,10 +369,7 @@ class SpotifyWebApi
         $this->setLastRequest();
         $result = $this->refreshAccessToken();
         if(isset($result->access_token)) {
-            $this->setAccessToken($result->access_token);
-            $this->putLastRequest();
-            $this->setHeaders([]);
-            $this->getResult();
+            $this->setAccessToken($result->access_token)->returnLastRequest()->getResult();
         } else {
             throw new SpotifyWebAPIException('Cant find access token in refresh token response');
         }
@@ -339,89 +386,52 @@ class SpotifyWebApi
     private function setLastRequest()
     {
         $this->lastRequest = [
-            'params' => $this->getQueryString(),
-            'method' => $this->getRequestType(),
-            'action' => $this->getAction(),
-            'url' => $this->getBaseUri(),
+            'requestParams' => $this->getRequestParams(),
+            'requestType' => $this->getRequestType(),
+            'baseUri' => $this->getBaseUri(),
+            'uri' => $this->getUri(),
         ];
     }
 
-    private function putLastRequest()
+    private function returnLastRequest()
     {
-        if(isset($this->lastRequest['params'])) {
-            $this->setQueryString($this->lastRequest['params']);
+        if(isset($this->lastRequest['requestParams'])) {
+            $this->requestParams = $this->lastRequest['requestParams'];
         }
-        if(isset($this->lastRequest['method'])) {
-            $this->setRequestType($this->lastRequest['method']);
+        if(isset($this->lastRequest['requestType'])) {
+            $this->setRequestType($this->lastRequest['requestType']);
         }
-        if(isset($this->lastRequest['action'])) {
-            $this->setAction($this->lastRequest['action']);
+        if(isset($this->lastRequest['baseUri'])) {
+            $this->setBaseUri($this->lastRequest['baseUri']);
         }
-        if(isset($this->lastRequest['action'])) {
-            $this->setAction($this->lastRequest['action']);
+        if(isset($this->lastRequest['uri'])) {
+            $this->setUri($this->lastRequest['uri']);
         }
-        if(isset($this->lastRequest['url'])) {
-            $this->setBaseUri($this->lastRequest['url']);
-        }
+        return $this;
     }
     
-    private function getBaseUri()
-    {
-        return $this->baseUri;
-    }
-
-    private function setBaseUri()
-    {
-        return $this->baseUri;
-    }
-
-    protected function getResponse()
+    public function getResponse()
     {
         return $this->response;
     }
 
     /**
-     * This function send prepared request and return parsed response
+     * Send prepared request and return parsed response
      */
     public function getResult()
     {
         return $this->sendRequest()->getResponse();
     }
 
-    protected function setRequestContentType($contentType)
+    private function parseRawResponse($rawResponseBody)
     {
-        $this->requestContentType = $contentType;
-    }
-
-    private function getResponseBody($fullResponse, $header_size)
-    {
-        $header = substr($fullResponse, 0, $header_size);
-        $this->rawResponseBody = substr($fullResponse, $header_size);
-    }
-
-    private function parseRawResponse()
-    {
-        $decodedResponse = json_decode($this->rawResponseBody);
+        $decodedResponse = json_decode($rawResponseBody);
         if(json_last_error() !== JSON_ERROR_NONE) {
             throw new SpotifyWebAPIException('The response from Spotify is not valid json');
         }
-        if(isset($decodedResponse->error)) {
-            if(is_string($decodedResponse->error)) {
-                throw new SpotifyWebAPIException($decodedResponse->error);
-            }
-            throw new SpotifyWebAPIException($decodedResponse->error->message, $decodedResponse->error->status);
-        }
-
         SpotifyPagination::parsePagination($decodedResponse);
-        $this->response = $decodedResponse;
+        return $decodedResponse;
     }
-
-    public function getAuthorizationBasicHeader()
-    {
-        $payload = base64_encode($this->getClientId() . ':' . $this->getClientSecret());
-        return 'Authorization: Basic ' . $payload;
-    }
-
 
     /**
      * Auto refresh expired token
@@ -430,16 +440,14 @@ class SpotifyWebApi
      */
     public function refreshAccessToken()
     {
-        $parameters = [
-            'grant_type' => 'refresh_token',
-            'refresh_token' => $this->getRefreshToken(),
-        ];
-        $this->setAccessToken(null);
-        $this->setHeaders($this->getAuthorizationBasicHeader());
+        $this->setRequestParam('auth', [$this->getClientId(), $this->getClientSecret()]);    
         try {
-            return $this->account()->token()->setQueryString($parameters)->sendRequest()->getResponse();
+            return $this->account()->provider(SpotifyServices::token())->setQueryString([
+                'grant_type' => 'refresh_token',
+                'refresh_token' => $this->getRefreshToken(),
+            ])->getResult();
         } catch(SpotifyWebAPIException $e) {
-            throw new SpotifyWebAPIException('Cant Refresh Access Token - '.$e->getMessage());
+            throw new SpotifyWebAPIException('Cant Refresh Access Token - ' . $e->getMessage());
         }
     }
 }
