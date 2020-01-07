@@ -28,8 +28,8 @@ class Albums implements InterfaceSpotifyService
     {
         $ids = (array)$ids;
         $ids_string = implode(',', $ids);
-        $this->setConnectionParams(['ids' => $ids_string]);
-        $this->setConnectionMethod('GET');
+        $this->setQueryString(['ids' => $ids_string]);
+        $this->setRequestType('GET');
         $this->setAction(self::GET_ALBUMS);
         return $this;
     }
@@ -41,7 +41,7 @@ class Albums implements InterfaceSpotifyService
      */
     public function getTracks($id)
     {
-        $this->setConnectionMethod('GET');
+        $this->setRequestType('GET');
         $this->setAction(str_replace('{id}', $id, self::GET_ALBUM_TRACKS));
         SpotifyPagination::setHasPagination(true);
         return $this;
@@ -54,27 +54,27 @@ class Albums implements InterfaceSpotifyService
      */
     public function getAlbum($id)
     {
-        $this->setConnectionMethod('GET');
+        $this->setRequestType('GET');
         $this->setAction(str_replace('{id}', $id, self::GET_ALBUM));
         return $this;
     }
 
-    private function setConnectionMethod($method)
+    private function setRequestType($method)
     {
         $this->method = $method;
     }
 
-    public function getConnectionMethod()
+    public function getRequestType()
     {
         return $this->method;
     }
 
-    private function setConnectionParams($params)
+    private function setQueryString($params)
     {
         $this->params = $params;
     }
 
-    public function getConnectionParams()
+    public function getQueryString()
     {
         return $this->params;
     }

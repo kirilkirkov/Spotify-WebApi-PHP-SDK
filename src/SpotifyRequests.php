@@ -82,14 +82,14 @@ class SpotifyRequests
         
     public function authorize()
     {
-        $this->setConnectionMethod('GET');
+        $this->setRequestType('GET');
         $this->setAction(self::AUTHORIZE);
         return $this;
     }
 
     public function token()
     {
-        $this->setConnectionMethod('POST');
+        $this->setRequestType('POST');
         $this->setAction(self::TOKEN);
         return $this;
     }
@@ -103,11 +103,11 @@ class SpotifyRequests
 
             call_user_func_array(array($this->serviceContainer, $name), $arguments);
             
-            if($this->serviceContainer->getConnectionMethod() != null) {
-                $this->setConnectionMethod($this->serviceContainer->getConnectionMethod());
+            if($this->serviceContainer->getRequestType() != null) {
+                $this->setRequestType($this->serviceContainer->getRequestType());
             }
-            if($this->serviceContainer->getConnectionParams() != null) {
-                $this->setConnectionParams($this->serviceContainer->getConnectionParams());
+            if($this->serviceContainer->getQueryString() != null) {
+                $this->setQueryString($this->serviceContainer->getQueryString());
             }
             if($this->serviceContainer->getAction() != null) {
                 $this->setAction($this->serviceContainer->getAction());
