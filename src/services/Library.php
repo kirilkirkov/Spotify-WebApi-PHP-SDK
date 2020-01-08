@@ -2,6 +2,8 @@
 
 namespace SpotifyWebAPI\Services;
 
+use SpotifyWebAPI\SpotifyPagination;
+
 /**
  * @author Kiril Kirkov
  * Spotify Library Service
