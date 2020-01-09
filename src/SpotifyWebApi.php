@@ -37,6 +37,7 @@ class SpotifyWebApi
     // Request result params
     private $rawResponseBody;
     private $response;
+    private $responseHeaders;
 
     // Refresh token
     private $lastRequest = [];
@@ -330,21 +331,45 @@ class SpotifyWebApi
         unset($this->headers['Authorization']);
     }
 
+    private function setResponseHeaders($headers)
+    {
+        $this->responseHeaders = $headers;
+    }
+
+    private function getResponseHeaders()
+    {
+        return $this->responseHeaders;
+    }
+
     public function sendRequest()
     {
+        $this->paginationCheck();
         try {
             $client = new GuzzleClient(['base_uri' => $this->getBaseUri(), 'headers' => $this->getHeaders()]);
             $response = $client->request($this->getRequestType(), $this->getUri(), $this->getRequestParams());
             $body = $response->getBody();
+            $this->setResponseHeaders($response->getHeaders());
             $this->response = $this->parseRawResponse((string)$body);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             $responseBody = json_decode($e->getResponse()->getBody()->getContents());
-            $this->errorHandler(new SpotifyWebAPIException($responseBody->error->message ?? $responseBody->error));
+            $this->setResponseHeaders($e->getResponse()->getHeaders());
+            $this->errorHandler(new SpotifyWebAPIException($responseBody->error->message ?? $responseBody->error, $e->getCode()));
         } catch (SpotifyWebAPIException $e) {
             throw new SpotifyWebAPIException($e->getMessage());
         }
-       
+        
         return $this;
+    }
+
+    /**
+     * Set pagination if has
+     */
+    private function paginationCheck()
+    {
+        if(SpotifyPagination::getHasPagination()) {
+            $this->setRequestParam('limit', SpotifyPagination::getLimit());
+            $this->setRequestParam('offset', SpotifyPagination::getOffset());
+        }
     }
     
     private function errorHandler(SpotifyWebAPIException $e)
@@ -358,6 +383,10 @@ class SpotifyWebApi
             }
         } elseif($e->invalidClient()) {
             throw new SpotifyWebAPIException('Probably missing header Content-Type: application/x-www-form-urlencoded');
+        } elseif($e->isRateLimited()) {
+            $retryRequestTime = (int)$this->getResponseHeaders()['Retry-After'];
+            sleep($retryRequestTime);
+            $this->getResult();
         } else {
             throw new SpotifyWebAPIException($e->getMessage());
         }
