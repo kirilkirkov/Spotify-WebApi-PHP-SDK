@@ -7,7 +7,7 @@ namespace SpotifyWebAPI\Services;
  * Spotify UsersProfile Service
  */
 
-class UsersProfile implements InterfaceSpotifyService
+class UsersProfile
 {
     
     const GET_USER = '/v1/me';
@@ -17,7 +17,7 @@ class UsersProfile implements InterfaceSpotifyService
      * Get Current User's Profile
      * Authorization - Required
      */
-    public function getUser()
+    public static function getUser()
     {
         return [
             'requestType' => 'GET',
@@ -30,7 +30,7 @@ class UsersProfile implements InterfaceSpotifyService
      * Authorization - Required
      * @param string $id - Id of the track.
      */
-    public function getUsers($user_id)
+    public static function getUsers($user_id)
     {
         return [
             'requestType' => 'GET',

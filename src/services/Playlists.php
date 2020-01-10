@@ -27,7 +27,7 @@ class Playlists
     public static function addTrackToPlaylist($playlist_id, Array $uris)
     {
         return [
-            'queryString' => ['uris' => implode(',', $uris)],
+            'setQueryParams' => ['uris' => implode(',', $uris)],
             'requestType' => 'POST',
             'uri' => str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS),
         ];
@@ -42,7 +42,7 @@ class Playlists
     public static function updatePlaylist(String $playlist_id, Array $values)
     {
         return [
-            'queryString' => $values,
+            'setQueryParams' => $values,
             'requestType' => 'PUT',
             'uri' => str_replace('{playlist_id}', $playlist_id, self::GET_PLAYLIST),
         ];
@@ -57,7 +57,7 @@ class Playlists
     public static function createPlaylist(String $user_id, Array $values)
     {
         return [
-            'queryString' => $values,
+            'setQueryParams' => $values,
             'requestType' => 'POST',
             'uri' => str_replace('{user_id}', $user_id, self::USERS_PLAYLISTS),
         ];
@@ -139,7 +139,7 @@ class Playlists
     public static function playlistRemoveTracks(String $playlist_id, Array $tracks)
     {
         return [
-            'queryString' => ['tracks' => implode(',', $tracks)],
+            'setQueryParams' => ['tracks' => implode(',', $tracks)],
             'requestType' => 'DELETE',
             'uri' => str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS),
         ];
@@ -154,7 +154,7 @@ class Playlists
     public static function reorderPlaylistTracks(String $playlist_id, Array $params)
     {
         return [
-            'queryString' => $params,
+            'setQueryParams' => $params,
             'requestType' => 'PUT',
             'uri' => str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS),
         ];
@@ -169,7 +169,7 @@ class Playlists
     public static function replacePlaylistTracks(String $playlist_id, Array $uris)
     {
         return [
-            'queryString' => ['uris' => implode(',', $uris)],
+            'setQueryParams' => ['uris' => implode(',', $uris)],
             'requestType' => 'PUT',
             'uri' => str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_TRACKS),
         ];
@@ -184,7 +184,7 @@ class Playlists
     public static function uploadPlaylistCover(String $playlist_id, $image)
     {
         return [
-            'queryString' => $image,
+            'setQueryParams' => $image,
             'requestType' => 'PUT',
             'uri' => str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_IMAGES),
         ];

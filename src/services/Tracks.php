@@ -7,7 +7,7 @@ namespace SpotifyWebAPI\Services;
  * Spotify Tracks Service
  */
 
-class Tracks implements InterfaceSpotifyService
+class Tracks
 {
     const GET_AUDIO_ANALYSIS = '/v1/audio-analysis/{id}';
     const GET_AUDIO_FEATURES = '/v1/audio-features/{id}';
@@ -20,7 +20,7 @@ class Tracks implements InterfaceSpotifyService
      * Authorization - Required
      * @param string $id - Id of the track.
      */
-    public function getAudioAnalysis($id)
+    public static function getAudioAnalysis($id)
     {
         return [
             'requestType' => 'GET',
@@ -33,7 +33,7 @@ class Tracks implements InterfaceSpotifyService
      * Authorization - Required
      * @param string $id - Id of the track.
      */
-    public function getAudioFeatures($id)
+    public static function getAudioFeatures($id)
     {
         return [
             'requestType' => 'GET',
@@ -46,10 +46,10 @@ class Tracks implements InterfaceSpotifyService
      * Authorization - Required
      * @param string $ids - Ids of the tracks.
      */
-    public function getAudiosFeatures($ids)
+    public static function getAudiosFeatures($ids)
     {
         return [
-            'queryString' => ['ids' => implode(',', $ids)],
+            'setQueryParams' => ['ids' => implode(',', $ids)],
             'requestType' => 'GET',
             'uri' => self::GET_AUDIOS_FEATURES,
         ];
@@ -60,10 +60,10 @@ class Tracks implements InterfaceSpotifyService
      * Authorization - Required
      * @param string $ids - Ids of the tracks.
      */
-    public function getTracks(Array $ids)
+    public static function getTracks(Array $ids)
     {
         return [
-            'queryString' => ['ids' => implode(',', $ids)],
+            'setQueryParams' => ['ids' => implode(',', $ids)],
             'requestType' => 'GET',
             'uri' => self::GET_TRACKS,
         ];
@@ -74,7 +74,7 @@ class Tracks implements InterfaceSpotifyService
      * Authorization - Required
      * @param string $id - Id of the track.
      */
-    public function getTrack($id)
+    public static function getTrack($id)
     {
         return [
             'requestType' => 'GET',

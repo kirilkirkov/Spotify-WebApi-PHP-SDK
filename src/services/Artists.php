@@ -48,10 +48,12 @@ class Artists
      * Get an Artist's Top Tracks
      * Authorization - Required
      * @param string $id Id of artist.
+     * @param string $country Country
      */
-    public static function getArtistTopTracks($id)
+    public static function getArtistTopTracks(String $id, String $country)
     {
         return [
+            'setQueryParams' => ['country' => $country],
             'requestType' => 'GET',
             'uri' => str_replace('{id}', $id, self::GET_ARTIST_TOP_TRACKS),
         ];
