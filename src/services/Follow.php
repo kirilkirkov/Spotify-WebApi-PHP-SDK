@@ -24,6 +24,7 @@ class Follow
      */
     public static function checkUserFollows($type, Array $ids)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'queryString' => ['type' => $type, 'ids' => implode(',', $ids)],
             'requestType' => 'GET',
@@ -39,6 +40,7 @@ class Follow
      */
     public static function checkUserFollowPlaylist($playlist_id, Array $ids)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'queryString' => ['ids' => implode(',', $ids)],
             'requestType' => 'GET',
@@ -54,6 +56,7 @@ class Follow
      */
     public static function followArtistsOrUsers($type, Array $ids)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'queryString' => ['type' => $type, 'ids' => implode(',', $ids)],
             'requestType' => 'PUT',
@@ -68,6 +71,7 @@ class Follow
      */
     public static function followPaylist(String $playlist_id)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'requestType' => 'PUT',
             'uri' => str_replace('{playlist_id}', $playlist_id, self::FOLLOW_PLAYLIST),
@@ -97,6 +101,7 @@ class Follow
      */
     public static function unfollow($type, Array $ids)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'queryString' => ['type' => $type, 'ids' => implode(',', $ids)],
             'requestType' => 'DELETE',
@@ -111,6 +116,7 @@ class Follow
      */
     public static function unfollowPlaylist(String $playlist_id)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'requestType' => 'DELETE',
             'uri' => str_replace('{playlist_id}', $playlist_id, self::FOLLOW_PLAYLIST),

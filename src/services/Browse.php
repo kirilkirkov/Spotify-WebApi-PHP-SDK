@@ -26,6 +26,7 @@ class Browse
      */
     public static function getCategory($category_id)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'requestType' => 'GET',
             'uri' => str_replace('{category_id}', $category_id, self::GET_CATEGORY),
@@ -91,6 +92,7 @@ class Browse
      */
     public static function getRecommendationsSeeds()
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'requestType' => 'GET',
             'uri' => self::GET_RECOMMENDATIONS_SEEDS,

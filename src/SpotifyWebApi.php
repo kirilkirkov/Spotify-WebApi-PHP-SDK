@@ -403,8 +403,7 @@ class SpotifyWebApi
     private function paginationCheck()
     {
         if(SpotifyPagination::getHasPagination()) {
-            $this->setQueryString('limit', SpotifyPagination::getLimit());
-            $this->setQueryString('offset', SpotifyPagination::getOffset());
+            $this->setQueryString(['limit' => SpotifyPagination::getLimit(), 'offset' => SpotifyPagination::getOffset()]);
         }
     }
     

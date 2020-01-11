@@ -24,6 +24,7 @@ class Artists
      */
     public static function getArtist($id)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'requestType' => 'GET',
             'uri' => str_replace('{id}', $id, self::GET_ARTIST),
@@ -48,10 +49,11 @@ class Artists
      * Get an Artist's Top Tracks
      * Authorization - Required
      * @param string $id Id of artist.
-     * @param string $country Country
+     * @param string $country Country - from_token or ISO 3166-1 alpha-2 country code
      */
     public static function getArtistTopTracks(String $id, String $country)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'setQueryParams' => ['country' => $country],
             'requestType' => 'GET',
@@ -66,6 +68,7 @@ class Artists
      */
     public static function getArtistRelatedArtists($id)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'requestType' => 'GET',
             'uri' => str_replace('{id}', $id, self::GET_ARTIST_RELATED_ARTISTS),
@@ -79,6 +82,7 @@ class Artists
      */
     public static function getArtists(Array $ids)
     {
+        SpotifyPagination::setHasPagination(false);
         $ids_string = implode(',', $ids);
         return [
             'queryString' => ['ids' => $ids_string],

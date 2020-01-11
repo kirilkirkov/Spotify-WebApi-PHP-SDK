@@ -124,6 +124,7 @@ class Player
      */
     public static function setPlayerVolume($volume_percent)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'queryString' => ['volume_percent' => $volume_percent],
             'requestType' => 'PUT',
@@ -138,6 +139,7 @@ class Player
      */
     public static function playerGoNext()
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'requestType' => 'POST',
             'uri' => self::PLAYER_NEXT,
@@ -151,6 +153,7 @@ class Player
      */
     public static function playerGoPrevious()
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'requestType' => 'POST',
             'uri' => self::PLAYER_PREVIOUS,
@@ -164,6 +167,7 @@ class Player
      */
     public static function playerPlay()
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'requestType' => 'PUT',
             'uri' => self::PLAYER_PLAY,
@@ -177,6 +181,7 @@ class Player
      */
     public static function playerShuffle($state)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'queryString' => ['state' => $state],
             'requestType' => 'PUT',
@@ -191,6 +196,7 @@ class Player
      */
     public static function transferPlayback($device_id)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'queryString' => ['device_ids' => json_encode(['device_ids' => [$device_id]])],
             'requestType' => 'PUT',

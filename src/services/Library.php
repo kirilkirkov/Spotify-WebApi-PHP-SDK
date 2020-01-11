@@ -23,6 +23,7 @@ class Library
      */
     public static function checkSavedAlbums(Array $ids)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'queryString' => ['ids' => implode(',', $ids)],
             'requestType' => 'GET',
@@ -37,6 +38,7 @@ class Library
      */
     public static function checkSavedTracks(Array $ids)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'queryString' => ['ids' => implode(',', $ids)],
             'requestType' => 'GET',
@@ -77,6 +79,7 @@ class Library
      */
     public static function removeAlbum(Array $ids)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'queryString' => ['ids' => implode(',', $ids)],
             'requestType' => 'DELETE',
@@ -91,6 +94,7 @@ class Library
      */
     public static function removeTrack(Array $ids)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'queryString' => ['ids' => implode(',', $ids)],
             'requestType' => 'DELETE',
@@ -105,6 +109,7 @@ class Library
      */
     public static function addAlbums(Array $ids)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'queryString' => ['PUT' => implode(',', $ids)],
             'requestType' => 'DELETE',
@@ -119,6 +124,7 @@ class Library
      */
     public static function addTracks(Array $ids)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'queryString' => ['PUT' => implode(',', $ids)],
             'requestType' => 'PUT',

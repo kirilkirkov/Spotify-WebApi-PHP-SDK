@@ -2,6 +2,8 @@
 
 namespace SpotifyWebAPI\Services;
 
+use SpotifyWebAPI\SpotifyPagination;
+
 /**
  * @author Kiril Kirkov
  * Spotify UsersProfile Service
@@ -19,6 +21,7 @@ class UsersProfile
      */
     public static function getUser()
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'requestType' => 'GET',
             'uri' => self::GET_USER,
@@ -32,6 +35,7 @@ class UsersProfile
      */
     public static function getUsers($user_id)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'requestType' => 'GET',
             'uri' => str_replace('{user_id}', $user_id, self::GET_USERS),

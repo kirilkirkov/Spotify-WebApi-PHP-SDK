@@ -26,6 +26,7 @@ class Playlists
      */
     public static function addTrackToPlaylist($playlist_id, Array $uris)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'setQueryParams' => ['uris' => implode(',', $uris)],
             'requestType' => 'POST',
@@ -41,6 +42,7 @@ class Playlists
      */
     public static function updatePlaylist(String $playlist_id, Array $values)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'setQueryParams' => $values,
             'requestType' => 'PUT',
@@ -56,6 +58,7 @@ class Playlists
      */
     public static function createPlaylist(String $user_id, Array $values)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'setQueryParams' => $values,
             'requestType' => 'POST',
@@ -97,6 +100,7 @@ class Playlists
      */
     public static function getPlaylistCover($playlist_id)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'requestType' => 'GET',
             'uri' => str_replace('{playlist_id}', $playlist_id, self::PLAYLIST_IMAGES),
@@ -110,6 +114,7 @@ class Playlists
      */
     public static function getPlaylist($playlist_id)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'requestType' => 'GET',
             'uri' => str_replace('{playlist_id}', $playlist_id, self::GET_PLAYLIST),
@@ -138,6 +143,7 @@ class Playlists
      */
     public static function playlistRemoveTracks(String $playlist_id, Array $tracks)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'setQueryParams' => ['tracks' => implode(',', $tracks)],
             'requestType' => 'DELETE',
@@ -153,6 +159,7 @@ class Playlists
      */
     public static function reorderPlaylistTracks(String $playlist_id, Array $params)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'setQueryParams' => $params,
             'requestType' => 'PUT',
@@ -168,6 +175,7 @@ class Playlists
      */
     public static function replacePlaylistTracks(String $playlist_id, Array $uris)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'setQueryParams' => ['uris' => implode(',', $uris)],
             'requestType' => 'PUT',
@@ -183,6 +191,7 @@ class Playlists
      */
     public static function uploadPlaylistCover(String $playlist_id, $image)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'setQueryParams' => $image,
             'requestType' => 'PUT',

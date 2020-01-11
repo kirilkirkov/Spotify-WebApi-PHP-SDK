@@ -22,6 +22,7 @@ class Albums
      */
     public static function getAlbums(Array $ids)
     {
+        SpotifyPagination::setHasPagination(false);
         $ids_string = implode(',', $ids);
         return [
             'queryString' => ['ids' => $ids_string],
@@ -51,6 +52,7 @@ class Albums
      */
     public static function getAlbum($id)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'requestType' => 'GET',
             'uri' => str_replace('{id}', $id, self::GET_ALBUM),

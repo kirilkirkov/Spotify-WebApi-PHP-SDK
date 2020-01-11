@@ -2,6 +2,8 @@
 
 namespace SpotifyWebAPI\Services;
 
+use SpotifyWebAPI\SpotifyPagination;
+
 /**
  * @author Kiril Kirkov
  * Spotify Tracks Service
@@ -22,6 +24,7 @@ class Tracks
      */
     public static function getAudioAnalysis($id)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'requestType' => 'GET',
             'uri' => str_replace('{id}', $id, self::GET_AUDIO_ANALYSIS),
@@ -35,6 +38,7 @@ class Tracks
      */
     public static function getAudioFeatures($id)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'requestType' => 'GET',
             'uri' => str_replace('{id}', $id, self::GET_AUDIO_FEATURES),
@@ -48,6 +52,7 @@ class Tracks
      */
     public static function getAudiosFeatures($ids)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'setQueryParams' => ['ids' => implode(',', $ids)],
             'requestType' => 'GET',
@@ -62,6 +67,7 @@ class Tracks
      */
     public static function getTracks(Array $ids)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'setQueryParams' => ['ids' => implode(',', $ids)],
             'requestType' => 'GET',
@@ -76,6 +82,7 @@ class Tracks
      */
     public static function getTrack($id)
     {
+        SpotifyPagination::setHasPagination(false);
         return [
             'requestType' => 'GET',
             'uri' => str_replace('{id}', $id, self::GET_TRACK),
