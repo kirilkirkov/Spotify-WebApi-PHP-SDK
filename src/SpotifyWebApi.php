@@ -139,6 +139,11 @@ class SpotifyWebApi
         return $this;
     }
 
+    public function getQueryString()
+    {
+        return $this->requestParams['query'] ?? null;
+    }
+
     /**
      * @param string $params Set params for auth header
      */
@@ -271,14 +276,16 @@ class SpotifyWebApi
      */
     public function getUrlForCodeToken(String $redirectUri = null, String $clientId = null, Array $options = [])
     {
-        return $this->account()->authorize()->setFormParams([
+        $account = $this->account()->provider(SpotifyServices::authorize());
+        $qString = http_build_query([
             'client_id' => $clientId ?? $this->getClientId(),
             'redirect_uri' => $redirectUri,
             'response_type' => 'code',
-            'scope' => $options['code'] ?? null,
+            'scope' => $options['scope'] ?? null,
             'show_dialog' => $options['show_dialog'] ?? null,
             'state' => $options['state'] ?? null,
-        ])->getPreparedUrl();
+        ]);
+        return (string) $this->getBaseUri().$this->getUri().'?'.$qString;
     }
 
     /**
@@ -292,7 +299,7 @@ class SpotifyWebApi
     public function getAccessTokenWithCode(String $code, String $redirectUri)
     {
         $this->setAuthParams([$this->getClientId(), $this->getClientSecret()]);
-        return $this->account()->provider($this->service()->token())->setFormParams([
+        return $this->account()->provider(SpotifyServices::token())->setFormParams([
             'code' => $code,
             'grant_type' => 'authorization_code',
             'redirect_uri' => $redirectUri,
@@ -315,7 +322,7 @@ class SpotifyWebApi
     public function getAccessTokenWithCredentials(String $clientId, String $clientSecret)
     {
         $this->setAuthParams([$this->getClientId(), $this->getClientSecret()]);
-        return $this->account()->provider($this->service()->token())->setFormParams([
+        return $this->account()->provider(SpotifyServices::token())->setFormParams([
             'grant_type' => 'client_credentials',
         ])->getResult();
 
@@ -393,7 +400,6 @@ class SpotifyWebApi
         } catch (SpotifyWebAPIException $e) {
             throw new SpotifyWebAPIException($e->getMessage());
         }
-        
         return $this;
     }
 
@@ -403,7 +409,19 @@ class SpotifyWebApi
     private function paginationCheck()
     {
         if(SpotifyPagination::getHasPagination()) {
-            $this->setQueryString(['limit' => SpotifyPagination::getLimit(), 'offset' => SpotifyPagination::getOffset()]);
+            $pagination = [
+                'limit' => SpotifyPagination::getLimit(), 'offset' => SpotifyPagination::getOffset()
+            ];
+            $currentQueryString = $this->getQueryString();
+                if(!is_null($currentQueryString)) {
+                $currentQueryString = array_merge($currentQueryString, $pagination);
+                $this->setQueryString($currentQueryString);
+
+                return $this;
+            }
+            $this->setQueryString($pagination);
+
+            return $this;
         }
     }
     
@@ -519,7 +537,6 @@ class SpotifyWebApi
                 'refresh_token' => $this->getRefreshToken(),
             ])->getResult();
         } catch(SpotifyWebAPIException $e) {
-            dd($this->requestParams);
             throw new SpotifyWebAPIException('Cant Refresh Access Token - ' . $e->getMessage());
         }
     }
