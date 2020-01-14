@@ -3,8 +3,8 @@
 <p>requires php >= 7.2</p>
 
 ## Installation
-<p>composer require kirilkirkov/spotify-webapi-sdk
-Needed external library [Guzzle](https://github.com/guzzle/guzzle) - composer require guzzlehttp/guzzle:~6.0</p>
+composer require kirilkirkov/spotify-webapi-sdk
+Needed external library [Guzzle](https://github.com/guzzle/guzzle) - composer require guzzlehttp/guzzle:~6.0
 
 ## Doesnt have token?
 
