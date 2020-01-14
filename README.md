@@ -59,3 +59,7 @@ It is good practise to add ip of the api that you call in the hosts file in your
 
 Can increase your execution time of scripts 
 ini_set('max_execution_time', XXX); and set_time_limit(XXX);
+
+### Functions
+In the wiki of this repository you can find all functions available in this sdk (all the ones supported by Spotify have been integrated so far)
+- https://github.com/kirilkirkov/Spotify-WebApi-PHP-SDK/wiki/Functions-and-examples
