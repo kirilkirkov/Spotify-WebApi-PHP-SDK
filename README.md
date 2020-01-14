@@ -4,6 +4,7 @@
 
 ## Installation
 composer require kirilkirkov/spotify-webapi-sdk
+
 Needed external library [Guzzle](https://github.com/guzzle/guzzle) - composer require guzzlehttp/guzzle:~6.0
 
 ## Doesnt have token?
