@@ -10,32 +10,39 @@ Needed external library [Guzzle](https://github.com/guzzle/guzzle) - composer re
 ## Doesnt have token?
 
 ### Option 1 - Get access token with client credentials
-> $spotifyWebApi = new SpotifyWebApi();
+
+```
+$spotifyWebApi = new SpotifyWebApi();
 $token = $spotifyWebApi->getAccessTokenWithCredentials(
     'CLIENT_ID',
     'CLIENT_SECRET'
 );
 echo $token;
+```
 
 ### Option 2 - Get access token with code authorization (recommended)
 Before make requests you must add yours Redirect URIs to https://developer.spotify.com/dashboard
 
 Get redirect url for code:
-> $spotifyWebApi = new SpotifyWebApi([
+```
+$spotifyWebApi = new SpotifyWebApi([
     'clientId' => 'CLIENT_ID',
     'clientSecret' => 'CLIENT_SECRET',
 ]);
 
-> $callBackUrl = 'http://yoursite.com/callback';
+$callBackUrl = 'http://yoursite.com/callback';
 $url = $spotifyWebApi->getUrlForCodeToken($callBackUrl);
 header("Location: {$url}");
+```
 
 After signup in spotify you will be redirected back to provided above callback url (http://yoursite.com/callback) with parameter **$_GET['code']** with the code that can get token with following command:
-> $spotifyWebApi = new SpotifyWebApi();
+```
+$spotifyWebApi = new SpotifyWebApi();
 $tokens = $spotifyWebApi->getAccessTokenWithCode(
     'YOUR_CODE',
     'http://yoursite.com/callback'
 );
+```
 
 And you will receive array with *accessToken* and *refreshToken* in the example above **$tokens**.
 
@@ -44,13 +51,15 @@ Spotify tokens are valid 1 hour. If your token is expired and you make a call, t
 
 If you set $spotifyWebApi->returnNewTokenIfIsExpired(true); before your request calls, if access token is expired will be returned from the query, object with the new access_token, then you can save it in database and recall request with a fresh Access token. 
 You can also generate access token with refresh token manually with
-> $spotifyWebApi = new SpotifyWebApi([
+```
+$spotifyWebApi = new SpotifyWebApi([
             'clientId' => 'CLIENT_ID',
             'clientSecret' => 'CLIENT_SECRET',
             'accessToken' => $oldAccessToken,
             'refreshToken' => 'REFRESH_TOKEN',
 ]);
 $result = $spotifyWebApi->refreshAccessToken();
+```
 
 and save final expire timestamp with  time() + $result->expires_in. You can manualy generate new access token every time when saved in your database expired time is end.
 
