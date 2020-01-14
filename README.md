@@ -1,55 +1,61 @@
 # PHP SDK For Spotify Web Api
 
-requires php >= 7.0
+<p>requires php >= 7.2</p>
 
 ## Installation
-composer require kirilkirkov/spotify-webapi-sdk
+<p>composer require kirilkirkov/spotify-webapi-sdk
+Needed external library [Guzzle](https://github.com/guzzle/guzzle) - composer require guzzlehttp/guzzle:~6.0</p>
 
 ## Doesnt have token?
 
-### Get access token with client credentials
+### Option 1 - Get access token with client credentials
+> $spotifyWebApi = new SpotifyWebApi();
 $token = $spotifyWebApi->getAccessTokenWithCredentials(
-    'f6e1137695fb495994040a437d9d38a0',
-    '18d0bbec9ec4494eb5d4e6e6d97c4e0a'
+    'CLIENT_ID',
+    'CLIENT_SECRET'
 );
 echo $token;
 
-### Get access token with code authorization
+### Option 2 - Get access token with code authorization (recommended)
+Before make requests you must add yours Redirect URIs to https://developer.spotify.com/dashboard
+
 Get redirect url for code:
-$spotifyWebApi = new SpotifyWebApi([
-    'clientId' => 'f6e1137695fb495994040a437d9d38a0',
-    'clientSecret' => '18d0bbec9ec4494eb5d4e6e6d97c4e0a',
+> $spotifyWebApi = new SpotifyWebApi([
+    'clientId' => 'CLIENT_ID',
+    'clientSecret' => 'CLIENT_SECRET',
 ]);
 
-$callBackUrl = 'http://apollo.localhost/callback';
+> $callBackUrl = 'http://yoursite.com/callback';
 $url = $spotifyWebApi->getUrlForCodeToken($callBackUrl);
 header("Location: {$url}");
 
-In the provided callback url (http://apollo.localhost/callback) will be returned $_GET['code'] parameter 
-with the code that can get token with following command:
+After signup in spotify you will be redirected back to provided above callback url (http://yoursite.com/callback) with parameter **$_GET['code']** with the code that can get token with following command:
+> $spotifyWebApi = new SpotifyWebApi();
 $tokens = $spotifyWebApi->getAccessTokenWithCode(
-    'AQCT-KP6JcHiz5RieCMLvyGeKPlvMQQMbSWU5nsDfNzo77vbmWqG8dUDhJhX17f_nPMhXQ0V4bJ_yPdCyxjCyRkWS7A8omyVteFw-KLngL-NDdLvm4Lv2BOqWd-tvS7sj5dRtaJkP4FrPJpbEH78N8FP0D_H_G0iyODQmDHvw5Y9KgQEJ59ObINCEXD8ktSAoY8bmNYv',
-    'http://apollo.localhost/callback'
+    'YOUR_CODE',
+    'http://yoursite.com/callback'
 );
-And you will receive array with $accessToken and $refreshToken.
+
+And you will receive array with *accessToken* and *refreshToken* in the example above **$tokens**.
 
 ### Access/Refresh Tokens
-Spotify tokens are valid 1 hour. If your token is expired and you make a call, the sdk auto renew access token with 
-provided refresh token in every query (as there is no safe place to automatically save it).
-If you set $spotifyWebApi->connection()->returnNewTokenIfIsExpired(); before your request calls, if access token is expired 
-will be returned from the query, object with the new access_token,
-then you can save it in database and recall request with a fresh Access token.
-You can also generate access token with refresh token manually with $result = $spotifyWebApi->refreshAccessToken();
-and save final expire timestamp with  time() + $result->expires_in,
+Spotify tokens are valid 1 hour. If your token is expired and you make a call, the sdk auto renew access token with provided refresh token in every query (as there is no safe place to automatically save it).
 
-### Functions
-After initialization with valid access token (new SpotifyWebApi($myToken))
+If you set $spotifyWebApi->returnNewTokenIfIsExpired(true); before your request calls, if access token is expired will be returned from the query, object with the new access_token, then you can save it in database and recall request with a fresh Access token. 
+You can also generate access token with refresh token manually with
+> $spotifyWebApi = new SpotifyWebApi([
+            'clientId' => 'CLIENT_ID',
+            'clientSecret' => 'CLIENT_SECRET',
+            'accessToken' => $oldAccessToken,
+            'refreshToken' => 'REFRESH_TOKEN',
+]);
+$result = $spotifyWebApi->refreshAccessToken();
 
-Get several albums: ->api()->getAlbums(['41MnTivkwTO3UUJ8DrqEJJ','6JWc4iAiJ9FjyK0B59ABb4','6UXCm6bOO4gFlDQZV5yL37'])->getResult()
+and save final expire timestamp with  time() + $result->expires_in. You can manualy generate new access token every time when saved in your database expired time is end.
 
+### Suggestions
 
-setQueryParams - will set array with query key
-setFormParams - will set array with form_params key
-—>
-requestParams -> has all type of params
-getRequestParams return $requestParams
+It is good practise to add ip of the api that you call in the hosts file in yours server os because Guzzle sometime cannot resolve the dns.
+
+Can increase your execution time of scripts 
+ini_set('max_execution_time', XXX); and set_time_limit(XXX);
