@@ -2,6 +2,11 @@
 
 <p>requires php >= 7.2</p>
 
+- Integrated Pagination
+- Automated Token Refresh
+- Separate Services Files For All Api References
+- Guzzle Requests
+
 ## Installation
 composer require kirilkirkov/spotify-webapi-sdk
 
