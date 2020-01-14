@@ -78,3 +78,5 @@ ini_set('max_execution_time', XXX); and set_time_limit(XXX);
 ### Functions
 In the wiki of this repository you can find all functions available in this sdk (all the ones supported by Spotify have been integrated so far)
 - https://github.com/kirilkirkov/Spotify-WebApi-PHP-SDK/wiki/Functions-and-examples
+- https://github.com/kirilkirkov/Spotify-WebApi-PHP-SDK/wiki/Pagination Integrated Pagination Example
+
