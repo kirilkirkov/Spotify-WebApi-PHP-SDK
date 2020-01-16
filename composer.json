@@ -6,7 +6,8 @@
     "authors": [
       {
         "name": "Kiril Kirkov",
-        "email": "kirilkirkov91@gmail.com"
+        "email": "kirilkirkov91@gmail.com",
+        "role": "Developer"
       }
     ],
     "require": {
