@@ -3,6 +3,7 @@
     "description": "Spotify WebApi PHP Library",
     "type": "library",
     "license": "MIT",
+    "keywords": ["spotify", "spotify-api", "spotify-web-api", "spotify-php-sdk"],
     "authors": [
       {
         "name": "Kiril Kirkov",
@@ -11,7 +12,8 @@
       }
     ],
     "require": {
-        "php": ">= 7.2"
+        "php": "^7.2",
+        "guzzlehttp/guzzle": "~6.0"
     },
     "repositories": [
         {
