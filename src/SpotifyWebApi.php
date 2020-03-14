@@ -408,20 +408,23 @@ class SpotifyWebApi
      */
     private function paginationCheck()
     {
+        $currentQueryString = $this->getQueryString();
         if(SpotifyPagination::getHasPagination()) {
             $pagination = [
                 'limit' => SpotifyPagination::getLimit(), 'offset' => SpotifyPagination::getOffset()
             ];
-            $currentQueryString = $this->getQueryString();
-                if(!is_null($currentQueryString)) {
+            if(!is_null($currentQueryString)) {
                 $currentQueryString = array_merge($currentQueryString, $pagination);
                 $this->setQueryString($currentQueryString);
-
                 return $this;
             }
             $this->setQueryString($pagination);
-
             return $this;
+        } else {
+            if(!is_null($currentQueryString)) {
+                unset($currentQueryString['limit'], $currentQueryString['offset']);
+                $this->setQueryString($currentQueryString);
+            }
         }
     }
     
