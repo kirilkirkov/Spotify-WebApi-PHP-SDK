@@ -1,5 +1,7 @@
 # PHP SDK For Spotify Web Api
 
+<img src="https://raw.githubusercontent.com/kirilkirkov/Spotify-WebApi-PHP-SDK/master/.github/logo%402x.png" alt="Spotify PHP" width="400px" />
+
 <p>requires php >= 7.2</p>
 
 - Integrated Pagination
