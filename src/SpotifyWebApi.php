@@ -440,7 +440,9 @@ class SpotifyWebApi
         } elseif($e->invalidClient()) {
             throw new SpotifyWebAPIException('Probably missing header Content-Type: application/x-www-form-urlencoded');
         } elseif($e->isRateLimited()) {
-            $retryRequestTime = (int)$this->getResponseHeaders()['Retry-After'];
+            $responseHeaders = $this->getResponseHeaders();
+            $retryAfter = $responseHeaders['Retry-After'] ?? 1;
+            $retryRequestTime = (int)$retryAfter;
             sleep($retryRequestTime);
             $this->getResult();
         } else {
