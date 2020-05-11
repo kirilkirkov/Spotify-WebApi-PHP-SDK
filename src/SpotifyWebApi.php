@@ -182,7 +182,6 @@ class SpotifyWebApi
     private function getRequestParams()
     {
         return $this->requestParams;
-        return $this;
     }
 
     /**

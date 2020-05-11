@@ -89,12 +89,27 @@ class Browse
     /**
      * Get Recommendations Based on Seeds
      * Authorization - Required
+     * 
+     * @param array $seed_artists - Artists ids
+     * @param array $seed_genres - Genres
+     * @param array $seed_tracks - Tracks ids
+     * @param array $optional - Optional parameters. Eg. ['limit' => 20]
      */
-    public static function getRecommendationsSeeds()
+    public static function getRecommendationsSeeds(Array $seed_artists = [], Array $seed_genres = [], 
+        Array $seed_tracks = [], Array $optional = [])
     {
+        $query_params = [];
+        $query_params['seed_artists'] = implode(',', array_slice($seed_artists, 0, 5));
+        $query_params['seed_genres'] = implode(',', array_slice($seed_genres, 0, 5));
+        $query_params['seed_tracks'] = implode(',', array_slice($seed_tracks, 0, 5));
+        if(count($optional) > 0) {
+            $query_params = array_merge($query_params, $optional);
+        }
+
         SpotifyPagination::setHasPagination(false);
         return [
             'requestType' => 'GET',
+            'setQueryParams' => $query_params,
             'uri' => self::GET_RECOMMENDATIONS_SEEDS,
         ];
     }
