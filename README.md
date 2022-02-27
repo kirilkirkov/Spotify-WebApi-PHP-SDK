@@ -12,8 +12,6 @@
 ## Installation
 composer require kirilkirkov/spotify-webapi-sdk
 
-Needed external library [Guzzle](https://github.com/guzzle/guzzle) - composer require guzzlehttp/guzzle:~6.0
-
 <p>Example usage with code:</p>
 https://github.com/kirilkirkov/Spotify-WebApi-PHP-SDK/wiki/Example-Usage-with-Code
 
