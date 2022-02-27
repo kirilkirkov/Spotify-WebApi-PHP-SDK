@@ -19,12 +19,20 @@ Needed external library [Guzzle](https://github.com/guzzle/guzzle) - composer re
 ### Option 1 - Get access token with client credentials
 
 ```
-$spotifyWebApi = new SpotifyWebApi();
-$token = $spotifyWebApi->getAccessTokenWithCredentials(
-    'CLIENT_ID',
-    'CLIENT_SECRET'
-);
-echo $token;
+use SpotifyWebAPI\SpotifyWebApi;
+
+try {
+    $spotifyWebApi = new SpotifyWebApi();
+    $token_obj = $spotifyWebApi->getAccessTokenWithCredentials(
+        'CLIENT_ID',
+        'CLIENT_SECRET'
+    );
+    echo $token_obj->access_token;
+    // echo $token_obj->token_type;
+    // echo $token_obj->expires_in;
+} catch(\SpotifyWebAPI\SpotifyWebAPIException $e) {
+    echo $e->getMessage();
+}
 ```
 
 ### Option 2 - Get access token with code authorization (recommended)
@@ -32,23 +40,35 @@ Before make requests you must add yours Redirect URIs to https://developer.spoti
 
 Get redirect url for code:
 ```
-$spotifyWebApi = new SpotifyWebApi([
-    'clientId' => 'CLIENT_ID',
-    'clientSecret' => 'CLIENT_SECRET',
-]);
+use SpotifyWebAPI\SpotifyWebApi;
 
-$callBackUrl = 'http://yoursite.com/callback';
-$url = $spotifyWebApi->getUrlForCodeToken($callBackUrl);
-header("Location: {$url}");
+try {
+    $spotifyWebApi = new SpotifyWebApi([
+        'clientId' => 'CLIENT_ID',
+        'clientSecret' => 'CLIENT_SECRET',
+    ]);
+
+    $callBackUrl = 'http://yoursite.com/callback';
+    $url = $spotifyWebApi->getUrlForCodeToken($callBackUrl);
+    header("Location: {$url}");
+} catch(\SpotifyWebAPI\SpotifyWebAPIException $e) {
+    echo $e->getMessage();
+}
 ```
 
 After signup in spotify you will be redirected back to provided above callback url (http://yoursite.com/callback) with parameter **$_GET['code']** with the code that can get token with following command:
 ```
-$spotifyWebApi = new SpotifyWebApi();
-$tokens = $spotifyWebApi->getAccessTokenWithCode(
-    'YOUR_CODE',
-    'http://yoursite.com/callback'
-);
+use SpotifyWebAPI\SpotifyWebApi;
+
+try {
+    $spotifyWebApi = new SpotifyWebApi();
+    $tokens = $spotifyWebApi->getAccessTokenWithCode(
+        'YOUR_CODE',
+        'http://yoursite.com/callback'
+    );
+} catch(\SpotifyWebAPI\SpotifyWebAPIException $e) {
+    echo $e->getMessage();
+}
 ```
 
 And you will receive array with *accessToken* and *refreshToken* in the example above **$tokens**.
@@ -59,13 +79,19 @@ Spotify tokens are valid 1 hour. If your token is expired and you make a call, t
 If you set $spotifyWebApi->returnNewTokenIfIsExpired(true); before your request calls, if access token is expired will be returned from the query, object with the new access_token, then you can save it in database and recall request with a fresh Access token. 
 You can also generate access token with refresh token manually with
 ```
-$spotifyWebApi = new SpotifyWebApi([
-            'clientId' => 'CLIENT_ID',
-            'clientSecret' => 'CLIENT_SECRET',
-            'accessToken' => $oldAccessToken,
-            'refreshToken' => 'REFRESH_TOKEN',
-]);
-$result = $spotifyWebApi->refreshAccessToken();
+use SpotifyWebAPI\SpotifyWebApi;
+
+try {
+    $spotifyWebApi = new SpotifyWebApi([
+                'clientId' => 'CLIENT_ID',
+                'clientSecret' => 'CLIENT_SECRET',
+                'accessToken' => $oldAccessToken,
+                'refreshToken' => 'REFRESH_TOKEN',
+    ]);
+    $result = $spotifyWebApi->refreshAccessToken();
+} catch(\SpotifyWebAPI\SpotifyWebAPIException $e) {
+    echo $e->getMessage();
+}
 ```
 
 and save final expire timestamp with  time() + $result->expires_in. You can manualy generate new access token every time when saved in your database expired time is end.

@@ -318,8 +318,15 @@ class SpotifyWebApi
      * @param string $clientSecret Client secret.
      * @return string Access Token
      */
-    public function getAccessTokenWithCredentials(String $clientId, String $clientSecret)
+    public function getAccessTokenWithCredentials(String $clientId = null, String $clientSecret = null)
     {
+        if($clientId != null) {
+            $this->setClientId($clientId); 
+        }
+        if($clientSecret != null) {
+            $this->setClientSecret($clientSecret);
+        }
+        
         $this->setAuthParams([$this->getClientId(), $this->getClientSecret()]);
         return $this->account()->provider(SpotifyServices::token())->setFormParams([
             'grant_type' => 'client_credentials',
