@@ -15,6 +15,15 @@ composer require kirilkirkov/spotify-webapi-sdk
 <p>Example usage with code:</p>
 https://github.com/kirilkirkov/Spotify-WebApi-PHP-SDK/wiki/Example-Usage-with-Code
 
+## Donate
+<p>If this project help you reduce time to develop, you can give me a cup of coffee to continue its development. Thank you! :)</p>
+
+[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=W5BR6K29BQX7E)
+
+<p><b>BTC Address:</b> 3Qwge1rMAqb7ko3g6AeJraV4ms1pDu2pFd</p>
+
+![alt text](https://raw.githubusercontent.com/kirilkirkov/Shopping-Cart-Solution-CodeIgniter/master/github/btc.png "Bitcoin address")
+
 ## Doesnt have token?
 
 ### Option 1 - Get access token with client credentials
