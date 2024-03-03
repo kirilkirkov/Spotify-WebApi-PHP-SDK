@@ -113,5 +113,3 @@ In the wiki of this repository you can find all functions available in this sdk 
 <p>If this project help you reduce time to develop, you can give me a cup of coffee to continue its development. Thank you! :)</p>
 
 [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=7U9TVUV3URTK6)
-
-<p><b>BTC Address:</b> 3FmdTVWCApEcHT6wmrSCFkUSqaowsaqS9Y</p>
